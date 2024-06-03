@@ -272,7 +272,6 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                     </Stack>
                   </Grid>
 
-                  <h1>hello</h1>
                   <Grid item xs={12} md={6}>
                     <div spacing={1}>
                       <label htmlFor="photo-upload">

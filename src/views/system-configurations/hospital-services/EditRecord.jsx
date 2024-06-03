@@ -75,11 +75,11 @@ function EditRecord({ show, onHide, onClose, rowData }) {
           setIsSubmittingFormData={setIsSubmittingFormData}
           initialData={rowData}
         />
-        {editMutationIsLoading && (
+        {/* {editMutationIsLoading && (
           <center>
             <CircularProgress size={24} />
           </center>
-        )}
+        )} */}
       </DialogContent>
       <DialogActions>
         <Button

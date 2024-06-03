@@ -12,8 +12,8 @@ const menuItems = {
   items: [
     dashboard,
     pages,
-    userManagement,
-    systemConfigurations
+    systemConfigurations,
+    userManagement
     //  utilities,
     //  support
   ]

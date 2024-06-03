@@ -180,8 +180,8 @@ function ListRecords() {
     {
       title: 'Name',
       field: 'name',
-      sorting: true,
-      render: (rowData) => <span style={{ color: 'blue', cursor: 'pointer' }}>{rowData?.name}</span>
+      sorting: true
+      // render: (rowData) => <span style={{ color: 'blue', cursor: 'pointer' }}>{rowData?.name}</span>
     },
     {
       title: 'Address',

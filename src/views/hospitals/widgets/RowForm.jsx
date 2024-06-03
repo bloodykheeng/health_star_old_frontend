@@ -144,7 +144,6 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
       phone_number: Yup.string()
         .matches(/^\+[1-9]\d{1,14}$/, 'Phone number is not valid')
         .nullable(),
-      slug: Yup.string().max(255).required('Slug is required'),
       email: Yup.string().email('Must be a valid email').nullable(),
       website: Yup.string().url('Must be a valid URL').nullable(),
       capacity: Yup.number().integer().nullable(),
@@ -165,7 +164,6 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
               country: initialData?.country || '',
               zip_code: initialData?.zip_code || '',
               phone_number: initialData?.phone_number || '',
-              slug: initialData?.slug || '',
               email: initialData?.email || '',
               website: initialData?.website || '',
               capacity: initialData?.capacity || '',
