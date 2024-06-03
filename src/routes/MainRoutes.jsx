@@ -22,6 +22,9 @@ const UsersPage = Loadable(lazy(() => import('views/user-management/users/UsersP
 const RolesPage = Loadable(lazy(() => import('views/user-management/roles/RolesPage')));
 const PermissionsPage = Loadable(lazy(() => import('views/user-management/permissions/PermissionsPage')));
 
+//============================= services ========================
+const HospitalServicesPage = Loadable(lazy(() => import('views/system-configurations/hospital-services/HospitalServicesPage')));
+
 function AuthenticatedDashboard() {
   const { isLoading } = useAuthContext();
 
@@ -57,6 +60,10 @@ const MainRoutes = {
         {
           path: 'hospitals',
           element: <HospitalPage />
+        },
+        {
+          path: 'services',
+          element: <HospitalServicesPage />
         },
         {
           path: 'users',

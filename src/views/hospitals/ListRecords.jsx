@@ -3,22 +3,20 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 
 import {
-  getAllUsers,
-  getUserById,
-  getApproverRoles,
-  createUser,
-  updateUser,
-  deleteUserById,
-  getAssignableRoles
-} from '../../../services/auth/user-service';
+  getAllHospitals,
+  getHospitalById,
+  postHospital,
+  updateHospital,
+  deleteHospitalById
+} from '../../services/hospital/hospital-service';
 import EditRecord from './EditRecord';
 import CreateRecord from './CreateRecord';
 
 import moment from 'moment';
-import { Link } from 'react-router-dom';
-import ServerSideMuiTable from '../../../components/general_components/ServerSideMuiTable';
+import { Link, useNavigate } from 'react-router-dom';
+import ServerSideMuiTable from '../../components/general_components/ServerSideMuiTable';
+import ClientSideMuiTable from '../../components/general_components/ClientSideMuiTable';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import UserDetailsModal from './UserDetailsModal';
 import { toast } from 'react-toastify';
 
 import { Grid, Button, CircularProgress, Stack, Box } from '@mui/material';
@@ -40,12 +38,13 @@ import {
 import { Delete as DeleteIcon } from '@mui/icons-material';
 
 //============ get Auth Context ===============
-import useAuthContext from '../../../context/AuthContext';
+import useAuthContext from '../../context/AuthContext';
 
 function ListRecords() {
   const { user: loggedInUserData, logoutMutation, logoutMutationIsLoading } = useAuthContext();
   console.log('🚀 ~ ListRecords ~ loggedInUserData:', loggedInUserData);
 
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedItem, setSelectedItem] = useState({ id: null });
   const [tableQueryObject, setTableQueryObject] = useState();
@@ -54,17 +53,8 @@ function ListRecords() {
   const [showUserForm, setShowUserForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [userDetailShowModal, setUserDetailShowModal] = useState(false);
+
   const [userDetail, setUserDetail] = useState();
-
-  const handleOpenuserDetailModal = (rowData) => {
-    setUserDetail(rowData);
-    setUserDetailShowModal(true);
-  };
-
-  const handleCloseuserDetailModal = () => {
-    setUserDetailShowModal(false);
-  };
 
   const handleShowEditForm = (item) => {
     setSelectedItem(item);
@@ -90,19 +80,13 @@ function ListRecords() {
   const [orderDirection, setOrderDirection] = useState();
   console.log('🚀 ~ ListRecords ~ orderDirection:', orderDirection);
 
-  const getListOfUsersRef = useRef();
+  const getListOfHospitalsRef = useRef();
 
-  const getListOfUsers = useQuery({
-    queryKey: ['users', pageSize, pageParam, search, orderBy],
-    queryFn: () => getAllUsers({ per_page: pageSize, page: pageParam, search: search, orderBy: orderBy, orderDirection: orderDirection })
+  const getListOfHospitals = useQuery({
+    queryKey: ['hospitals', pageSize, pageParam, search, orderBy],
+    queryFn: () =>
+      getAllHospitals({ per_page: pageSize, page: pageParam, search: search, orderBy: orderBy, orderDirection: orderDirection })
   });
-
-  console.log(
-    'is dfdasdsfs loading : ' + getListOfUsers?.isLoading + ' is fetching : ' + getListOfUsers?.isFetching + ' data is : ',
-    getListOfUsers?.data?.data?.data
-  );
-
-  getListOfUsersRef.current = getListOfUsers;
 
   const handleMaterialTableQueryPromise = async (query) => {
     console.log('🚀 ~ handleMaterialTableQueryPromise ~ query:', query);
@@ -117,38 +101,40 @@ function ListRecords() {
     return;
   };
 
+  //===================end handle table server side rendering ==================
+
   useEffect(() => {
-    if (getListOfUsers?.isError) {
-      console.log('Error fetching List of Users :', getListOfUsers?.error);
-      getListOfUsers?.error?.response?.data?.message
-        ? toast.error(getListOfUsers?.error?.response?.data?.message)
-        : !getListOfUsers?.error?.response
+    if (getListOfHospitals?.isError) {
+      console.log('Error fetching List of Hospitals :', getListOfHospitals?.error);
+      getListOfHospitals?.error?.response?.data?.message
+        ? toast.error(getListOfHospitals?.error?.response?.data?.message)
+        : !getListOfHospitals?.error?.response
           ? toast.warning('Check Your Internet Connection Please')
           : toast.error('An Error Occured Please Contact Admin');
     }
-  }, [getListOfUsers?.isError]);
-  console.log('users list : ', getListOfUsers?.data?.data);
+  }, [getListOfHospitals?.isError]);
+  console.log('Hospitals list : ', getListOfHospitals?.data?.data);
 
-  const [deleteUserMutationIsLoading, setDeleteUserMutationIsLoading] = useState(false);
-  console.log('🚀 ~ ListRecords ~ deleteUserMutationIsLoading:', deleteUserMutationIsLoading);
-  const deleteUserMutation = useMutation({
-    mutationFn: deleteUserById,
+  const [deleteItemMutationIsLoading, setDeleteItemMutationIsLoading] = useState(false);
+
+  const deleteSelectedItemMutation = useMutation({
+    mutationFn: deleteHospitalById,
     onSuccess: (data) => {
-      queryClient.resetQueries(['users']);
+      queryClient.resetQueries(['Hospitals']);
       setLoading(false);
-      setDeleteUserMutationIsLoading(false);
+      setDeleteItemMutationIsLoading(false);
       console.log('deleted user succesfully ooooo: ');
     },
     onError: (err) => {
       console.log('The error is : ', err);
       toast.error('An error occurred!');
       setLoading(false);
-      setDeleteUserMutationIsLoading(false);
+      setDeleteItemMutationIsLoading(false);
     }
   });
 
   // const handleDelete = async (event, id) => {
-  //     console.log("users is xxxxx : ", id);
+  //     console.log("Hospitals is xxxxx : ", id);
   //     var result = window.confirm("Are you sure you want to delete? ");
   //     if (result === true) {
   //         setLoading(true);
@@ -156,29 +142,27 @@ function ListRecords() {
   //     }
   // };
 
-  const handleCloseUserDetailModal = () => setUserDetailShowModal(false);
-
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteUserId, setDeleteUserId] = useState(null);
+  const [itemToDeleteId, setItemToDeleteId] = useState(null);
 
   const handleDelete = (event, id) => {
-    setDeleteUserId(id);
+    setItemToDeleteId(id);
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = () => {
-    if (deleteUserId !== null) {
-      setDeleteUserMutationIsLoading(true);
-      deleteUserMutation.mutate(deleteUserId);
+    if (itemToDeleteId !== null) {
+      setDeleteItemMutationIsLoading(true);
+      deleteSelectedItemMutation.mutate(itemToDeleteId);
       setDeleteDialogOpen(false);
-      setDeleteUserId(null);
+      setItemToDeleteId(null);
     }
   };
 
   const cancelDelete = () => {
-    setDeleteUserMutationIsLoading(false);
+    setDeleteItemMutationIsLoading(false);
     setDeleteDialogOpen(false);
-    setDeleteUserId(null);
+    setItemToDeleteId(null);
   };
 
   let tableId = 0;
@@ -187,46 +171,90 @@ function ListRecords() {
     {
       title: '#',
       width: '5%',
-      field: 'name',
-      sorting: false,
-      customFilterAndSearch: (term, rowData) => term == rowData.name.length,
+      field: 'id',
+      sorting: true,
       render: (rowData) => {
-        tableId = rowData.tableData.id;
-        tableId++;
-        return <div>{rowData.tableData.id}</div>;
+        return <div>{rowData.tableData.id + 1}</div>;
       }
     },
     {
       title: 'Name',
       field: 'name',
-      sorting: false,
-      render: (rowData) => (
-        <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleOpenuserDetailModal(rowData)}>
-          {rowData?.name}
-        </span>
-      )
+      sorting: true,
+      render: (rowData) => <span style={{ color: 'blue', cursor: 'pointer' }}>{rowData?.name}</span>
     },
-    { title: 'Email', field: 'email', sorting: false },
-    { title: 'Role', field: 'role', sorting: false },
-
-    // { title: 'Vendor', field: 'vendors.vendor.name', render: (rowData) => rowData?.vendors?.vendor?.name || 'N/A' },
     {
-      title: 'Status',
-      field: 'status',
-      sorting: false,
-      render: (rowData) => <Typography color={rowData.status === 'active' ? 'success' : 'error'}>{rowData.status}</Typography>
+      title: 'Address',
+      field: 'address',
+      sorting: true
     },
-    { title: 'Last Login', field: 'lastlogin' },
+    {
+      title: 'City',
+      field: 'city',
+      sorting: true
+    },
+    {
+      title: 'State',
+      field: 'state',
+      sorting: true
+    },
     {
       title: 'Photo',
       field: 'photo_url',
-      sorting: false,
+      sorting: true,
       render: (rowData) =>
         rowData.photo_url ? (
           <img src={`${import.meta.env.VITE_APP_API_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" />
         ) : (
           'No Image'
         )
+    },
+    {
+      title: 'Country',
+      field: 'country',
+      sorting: true
+    },
+    {
+      title: 'Zip Code',
+      field: 'zip_code',
+      sorting: true
+    },
+    {
+      title: 'Phone Number',
+      field: 'phone_number',
+      sorting: true
+    },
+    {
+      title: 'Slug',
+      field: 'slug',
+      sorting: true,
+      hidden: true
+    },
+    {
+      title: 'Email',
+      field: 'email',
+      sorting: true
+    },
+    {
+      title: 'Website',
+      field: 'website',
+      sorting: true,
+      render: (rowData) => (
+        <a href={rowData.website} target="_blank" rel="noopener noreferrer">
+          {rowData.website}
+        </a>
+      )
+    },
+    {
+      title: 'Capacity',
+      field: 'capacity',
+      sorting: true
+    },
+    {
+      title: 'Status',
+      field: 'status',
+      sorting: true,
+      render: (rowData) => <span style={{ color: rowData.status === 'active' ? 'green' : 'red' }}>{rowData.status}</span>
     }
   ];
 
@@ -237,25 +265,42 @@ function ListRecords() {
           <Box sx={{ height: '3rem', m: 1, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
             {loggedInUserData?.permissions?.includes('create') && (
               <Button onClick={handleShowUserForm} variant="contained" color="primary">
-                Add user
+                Add Hospital
               </Button>
             )}
           </Box>
-          <ServerSideMuiTable
-            tableTitle="Users"
-            tableData={getListOfUsers?.data?.data ?? []}
+          {/* <ServerSideMuiTable
+            tableTitle="Hospitals"
+            tableData={getListOfHospitals?.data?.data ?? []}
             tableColumns={columns}
             handleShowEditForm={handleShowEditForm}
             handleDelete={(e, item_id) => handleDelete(e, item_id)}
             showEdit={loggedInUserData?.permissions?.includes('update')}
             showDelete={loggedInUserData?.permissions?.includes('delete')}
-            loading={getListOfUsers.isLoading || getListOfUsers.status === 'loading' || deleteUserMutationIsLoading}
-            current_page={getListOfUsers?.data?.data?.current_page}
-            totalCount={getListOfUsers?.data?.data?.total}
+            loading={getListOfHospitals.isLoading || getListOfHospitals.status === 'loading' || deleteItemMutationIsLoading}
+            current_page={getListOfHospitals?.data?.data?.current_page}
+            totalCount={getListOfHospitals?.data?.data?.total}
             setTableQueryObject={setTableQueryObject}
             handleMaterialTableQueryPromise={handleMaterialTableQueryPromise}
+          /> */}
+
+          <ClientSideMuiTable
+            tableTitle="Hospitals"
+            tableData={getListOfHospitals?.data?.data ?? []}
+            tableColumns={columns}
+            handleShowEditForm={handleShowEditForm}
+            handleDelete={(e, item_id) => handleDelete(e, item_id)}
+            showEdit={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('update')}
+            showDelete={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('delete')}
+            loading={getListOfHospitals?.isLoading || getListOfHospitals?.status === 'loading' || deleteItemMutationIsLoading}
+            //
+            handleViewPage={(rowData) => {
+              navigate('hospital', { state: { hospitalData: rowData } });
+            }}
+            showViewPage={true}
+            hideRowViewPage={false}
           />
-          <UserDetailsModal user={userDetail} showModal={userDetailShowModal} handleCloseModal={handleCloseUserDetailModal} />
+
           <EditRecord
             rowData={selectedItem}
             show={showEditForm}

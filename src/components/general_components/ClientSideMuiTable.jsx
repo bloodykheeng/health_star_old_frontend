@@ -53,7 +53,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const MuiTable = ({
+const ClientSideMuiTable = ({
   showTextRowsSelected,
   showSelectAllCheckbox,
   exportButton,
@@ -321,4 +321,4 @@ const MuiTable = ({
   );
 };
 
-export default MuiTable;
+export default ClientSideMuiTable;

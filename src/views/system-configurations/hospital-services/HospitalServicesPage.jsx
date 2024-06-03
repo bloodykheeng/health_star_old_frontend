@@ -7,12 +7,12 @@ import Typography from '@mui/material/Typography';
 import MainCard from 'components/MainCard';
 import ListRecords from './ListRecords';
 
-function UsersPage() {
+function HospitalServicesPage() {
   return (
-    <MainCard title="users">
+    <MainCard title="Hospitals Services">
       <ListRecords />
     </MainCard>
   );
 }
 
-export default UsersPage;
+export default HospitalServicesPage;

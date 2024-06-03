@@ -4,6 +4,7 @@ import pages from './page';
 import utilities from './utilities';
 import support from './support';
 import userManagement from './user-management';
+import systemConfigurations from './system-configurations';
 
 // ==============================|| MENU ITEMS ||============================== //
 
@@ -11,7 +12,8 @@ const menuItems = {
   items: [
     dashboard,
     pages,
-    userManagement
+    userManagement,
+    systemConfigurations
     //  utilities,
     //  support
   ]
