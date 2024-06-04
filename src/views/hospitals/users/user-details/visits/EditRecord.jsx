@@ -40,7 +40,7 @@ function EditRecord({ show, onHide, onClose, rowData, userProfileData, hospitalD
     // event.preventDefault();
     setEditMutationIsLoading(true);
 
-    let finalData = { ...data, user_id: data?.user?.id, hospital_id: data?.hospital?.id };
+    let finalData = { ...data, no_of_points: data?.totalPoints, user_id: data?.user?.id, hospital_id: data?.hospital?.id };
 
     console.log('data we are submitting while creating a Hospital services : ', data);
     editMutation.mutate(finalData);

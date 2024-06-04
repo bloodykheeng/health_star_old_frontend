@@ -34,6 +34,8 @@ import { Delete as DeleteIcon } from '@mui/icons-material';
 //============ get Auth Context ===============
 import useAuthContext from '../../../../../context/AuthContext';
 
+import VisitDetailsModal from './VisitDetailsModal';
+
 function ListRecords({ userProfileData, hospitalData }) {
   const { user: loggedInUserData, logoutMutation, logoutMutationIsLoading } = useAuthContext();
   console.log('🚀 ~ ListRecords ~ loggedInUserData:', loggedInUserData);
@@ -48,7 +50,21 @@ function ListRecords({ userProfileData, hospitalData }) {
   const [showEditForm, setShowEditForm] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [userDetail, setUserDetail] = useState();
+  //====================== show details modal ====================
+
+  const [detailShowModal, setDetailShowModal] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState();
+
+  const handleOpenDetailModal = (rowData) => {
+    setSelectedRecord(rowData);
+    setDetailShowModal(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setDetailShowModal(false);
+  };
+
+  //======================emd show details modal ====================
 
   const handleShowEditForm = (item) => {
     setSelectedItem(item);
@@ -179,7 +195,12 @@ function ListRecords({ userProfileData, hospitalData }) {
     {
       title: 'User',
       field: 'user.name',
-      sorting: true
+      sorting: true,
+      render: (rowData) => (
+        <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleOpenDetailModal(rowData)}>
+          {rowData?.user?.name}
+        </span>
+      )
     },
     {
       title: 'Hospital',
@@ -197,6 +218,12 @@ function ListRecords({ userProfileData, hospitalData }) {
       field: 'end_date',
       sorting: true,
       render: (rowData) => moment(rowData.end_date).format('MM/DD/YYYY h:mm:ss A')
+    },
+    {
+      title: 'No of points',
+      field: 'no_of_points',
+      sorting: true,
+      render: (rowData) => new Intl.NumberFormat().format(rowData.no_of_points)
     },
     {
       title: 'Purpose',
@@ -277,6 +304,7 @@ function ListRecords({ userProfileData, hospitalData }) {
             hideRowViewPage={false}
           />
 
+          <VisitDetailsModal selectedRecord={selectedRecord} showModal={detailShowModal} handleCloseModal={handleCloseDetailModal} />
           <EditRecord
             rowData={selectedItem}
             show={showEditForm}

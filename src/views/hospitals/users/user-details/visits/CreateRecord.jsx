@@ -41,8 +41,11 @@ function CreateRecord({ show, onHide, onClose, userProfileData, hospitalData }) 
     setCreateMutationIsLoading(true);
     // event.preventDefault();
 
-    let finalData = { ...data, user_id: data?.user?.id, hospital_id: data?.hospital?.id };
+    let finalData = { ...data, no_of_points: data?.totalPoints, user_id: data?.user?.id, hospital_id: data?.hospital?.id };
     console.log('data we are submitting while creating a visit : ', finalData);
+
+    // setCreateMutationIsLoading(false);
+    // setIsSubmittingFormData(false);
     creactMutation.mutate(finalData);
   };
 
@@ -52,7 +55,7 @@ function CreateRecord({ show, onHide, onClose, userProfileData, hospitalData }) 
       <DialogContent dividers>
         <RowForm
           handleSubmittingFormData={handleSubmit}
-          isSubmittingFormData={isSubmittingFormData}
+          isSubmittingFormData={createMutationIsLoading}
           setIsSubmittingFormData={setIsSubmittingFormData}
           userProfileData={userProfileData}
           hospitalData={hospitalData}

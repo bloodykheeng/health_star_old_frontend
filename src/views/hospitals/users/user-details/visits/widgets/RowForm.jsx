@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable no-extra-boolean-cast */
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -96,7 +96,7 @@ import {
   postHospitalService,
   updateHospitalService,
   deleteHospitalServiceById
-} from '../../../../../../services/system-configurations/hospital-services-service.js';
+} from '../../../../../../services/hospital/hospital-services-service';
 
 function RowForm({
   handleSubmittingFormData,
@@ -242,6 +242,19 @@ function RowForm({
       status: Yup.string().required('Status is required')
     });
 
+  // Memoized function to calculate total points based on selected services
+  const calculateTotalPoints = useMemo(() => {
+    return (services) => {
+      let total = 0;
+      services.forEach((service) => {
+        if (service.no_of_points) {
+          total += parseFloat(service.no_of_points);
+        }
+      });
+      return total;
+    };
+  }, []); // Empty dependency array means it will only compute once
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -256,7 +269,8 @@ function RowForm({
               doctor_name: initialData?.doctor_name || '',
               details: initialData?.details || '',
               status: initialData?.status || '',
-              services: initialData?.services || [],
+              visit_services: initialData?.hospital_services || [],
+              totalPoints: calculateTotalPoints(initialData?.hospital_services || []),
               submit: null
             }}
             validationSchema={validationSchema}
@@ -289,6 +303,7 @@ function RowForm({
                         {({ field }) => (
                           <>
                             <Autocomplete
+                              isOptionEqualToValue={(option, value) => option.id === value.id}
                               options={getListOfUsers?.data?.data?.data ?? []}
                               getOptionLabel={(option) => option.name}
                               value={values.user}
@@ -330,6 +345,8 @@ function RowForm({
                         {({ field }) => (
                           <>
                             <Autocomplete
+                              //isOptionEqualToValue helps to define how comparison is gonna be made
+                              isOptionEqualToValue={(option, value) => option.id === value.id}
                               options={getListOfHospitals?.data?.data?.data ?? []}
                               getOptionLabel={(option) => option.name}
                               value={values.hospital}
@@ -541,16 +558,19 @@ function RowForm({
                   </Grid>
 
                   <Grid item xs={12} md={6}>
-                    <Field name="services">
+                    <Field name="visit_services">
                       {({ field }) => (
                         <>
                           <Autocomplete
+                            //isOptionEqualToValue helps to define how comparison is gonna be made
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
                             multiple
                             options={getListOfHospitalServices?.data?.data?.data ?? []}
-                            getOptionLabel={(option) => option.name}
-                            value={values.services}
+                            getOptionLabel={(option) => option.service.name}
+                            value={values.visit_services}
                             onChange={(event, newValue) => {
-                              setFieldValue('services', newValue);
+                              setFieldValue('visit_services', newValue);
+                              setFieldValue('totalPoints', calculateTotalPoints(newValue));
                             }}
                             renderInput={(params) => (
                               <TextField
@@ -558,16 +578,30 @@ function RowForm({
                                 variant="outlined"
                                 label="Services"
                                 placeholder="Select services"
-                                error={Boolean(touched.services && errors.services)}
+                                error={Boolean(touched.visit_services && errors.visit_services)}
                                 disabled={getListOfHospitalServices?.isLoading || isSubmittingFormData}
                               />
                             )}
                           />
                           {getListOfHospitalServices?.isLoading && <p>Loading...</p>}
-                          {touched.services && errors.services && <FormHelperText error>{errors.services}</FormHelperText>}
+                          {touched.visit_services && errors.visit_services && (
+                            <FormHelperText error>{errors.visit_services}</FormHelperText>
+                          )}
                         </>
                       )}
                     </Field>
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      name="totalPoints"
+                      label="Total Points"
+                      variant="outlined"
+                      value={values?.totalPoints?.toLocaleString()} // Format points with commas
+                      InputProps={{
+                        readOnly: true
+                      }}
+                    />
                   </Grid>
 
                   {errors.submit && (
