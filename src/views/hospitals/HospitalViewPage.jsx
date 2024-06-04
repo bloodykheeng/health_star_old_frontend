@@ -30,8 +30,14 @@ import { css } from '@emotion/react';
 import HospitalServicesPage from './hospital-services/HospitalServicesPage';
 import UsersPage from './users/UsersPage';
 
+//============ get Auth Context ===============
+import useAuthContext from '../../context/AuthContext';
+
 function HospitalViewPage() {
   const queryClient = useQueryClient();
+
+  const { user: loggedInUserData, logoutMutation, logoutMutationIsLoading } = useAuthContext();
+  console.log('🚀 ~ ListRecords ~ loggedInUserData:', loggedInUserData);
 
   const [showEditForm, setShowEditForm] = useState(false);
   const [profilePhotoVisible, setProfilePhotoVisible] = useState(false);
@@ -216,6 +222,14 @@ function HospitalViewPage() {
               </div>
             </center>
           </Dialog>
+
+          <EditForm
+            rowData={hospitalData}
+            show={showEditForm}
+            onHide={handleCloseEditForm}
+            onClose={handleCloseEditForm}
+            loggedInUserData={loggedInUserData}
+          />
         </Paper>
       )}
     </>

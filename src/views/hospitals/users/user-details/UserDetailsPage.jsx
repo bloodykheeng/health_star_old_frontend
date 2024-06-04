@@ -14,6 +14,7 @@ import BreadcrumbNav from '../../../../components/general_components/BreadcrumbN
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import {
   getAllUsers,
@@ -24,6 +25,8 @@ import {
   deleteUserById,
   getAssignableRoles
 } from '../../../../services/auth/user-service';
+
+import UserPointsPage from './user-points/UserPointsPage';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -45,6 +48,7 @@ function UserDetailsPage({ loggedInUserData }) {
   //
   let { state } = useLocation();
   let parentDataFormState = state?.userData ? state?.userData : null;
+  let hospitalData = state?.hospitalData ? state?.hospitalData : null;
 
   //===================== getDepartmentById by id =================
   const fetchParentById = useQuery({
@@ -97,146 +101,154 @@ function UserDetailsPage({ loggedInUserData }) {
     <>
       <div className="justify-content-center align-items-center h-100">
         <BreadcrumbNav />
-        <div className="col-12">
-          <Card className="mb-3" style={{ borderRadius: '.5rem' }}>
-            <div className="flex flex-wrap g-0">
-              <div
-                css={css`
-                  @media (max-width: 767px) {
-                    width: 100%;
-                    flex-grow: 0 !important;
-                  }
-                `}
-                className="text-center flex-grow-1"
-                style={{
-                  background: 'linear-gradient(to right bottom, #0074D9, #00A5F8)',
-                  padding: '1rem',
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                  color: 'white'
-                }}
-              >
-                <Avatar
-                  src={`${import.meta.env.VITE_APP_API_BASE_URL}${profileData?.photo_url}`}
-                  alt="Profile Picture"
-                  sx={{ width: 128, height: 128, cursor: 'pointer', my: 2 }}
-                  onClick={() => setProfilePhotoVisible(true)}
-                />
-                <h2>{profileData?.name}</h2>
-                <h2>ROLE: {profileData?.role}</h2>
-                <Button startIcon={<Edit />} className="m-2" variant="contained" color="primary" onClick={() => setShowEditForm(true)}>
-                  Edit Profile
-                </Button>
-                {/* <Button
-                  startIcon={<FaShoppingBag />}
-                  className="m-2"
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('products', { state: { user_detail: profileData } })}
+
+        {fetchParentById?.isLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <CircularProgress /> {/* Loading indicator */}
+          </div>
+        ) : (
+          <div className="col-12">
+            <Card className="mb-3" style={{ borderRadius: '.5rem' }}>
+              <div className="flex flex-wrap g-0">
+                <div
+                  css={css`
+                    @media (max-width: 767px) {
+                      width: 100%;
+                      flex-grow: 0 !important;
+                    }
+                  `}
+                  className="text-center flex-grow-1"
+                  style={{
+                    background: 'linear-gradient(to right bottom, #0074D9, #00A5F8)',
+                    padding: '1rem',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    color: 'white'
+                  }}
                 >
-                  View Product Catalogue
-                </Button> */}
-              </div>
-              <div
-                css={css`
-                  @media (max-width: 767px) {
-                    width: 100%;
-                    flex-grow: 0 !important;
-                  }
-                `}
-                className="flex-grow-1"
-              >
-                <div className="p-4">
-                  <Tabs value={tabIndex} onChange={handleChange} aria-label="profile tabs">
-                    <Tab label="User Details" />
-                    <Tab label="User Points" />
-                    <Tab label="Visits" />
-                  </Tabs>
-                  <TabPanel value={tabIndex} index={0}>
-                    <h3>Information</h3>
-                    <div>
-                      <div
-                        className="flex"
-                        style={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '1rem',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <h3>Name: </h3>
-                        <p className="text-muted">{profileData?.name}</p>
+                  <Avatar
+                    src={`${import.meta.env.VITE_APP_API_BASE_URL}${profileData?.photo_url}`}
+                    alt="Profile Picture"
+                    sx={{ width: 128, height: 128, cursor: 'pointer', my: 2 }}
+                    onClick={() => setProfilePhotoVisible(true)}
+                  />
+                  <h2>{profileData?.name}</h2>
+                  <h2>ROLE: {profileData?.role}</h2>
+                  <Button startIcon={<Edit />} className="m-2" variant="contained" color="primary" onClick={() => setShowEditForm(true)}>
+                    Edit Profile
+                  </Button>
+                  {/* <Button
+              startIcon={<FaShoppingBag />}
+              className="m-2"
+              variant="contained"
+              color="primary"
+              onClick={() => navigate('products', { state: { user_detail: profileData } })}
+            >
+              View Product Catalogue
+            </Button> */}
+                </div>
+                <div
+                  css={css`
+                    @media (max-width: 767px) {
+                      width: 100%;
+                      flex-grow: 0 !important;
+                    }
+                  `}
+                  className="flex-grow-1"
+                >
+                  <div className="p-4">
+                    <Tabs value={tabIndex} onChange={handleChange} aria-label="profile tabs">
+                      <Tab label="User Details" />
+                      <Tab label="User Points" />
+                      <Tab label="Visits" />
+                    </Tabs>
+                    <TabPanel value={tabIndex} index={0}>
+                      <h3>Information</h3>
+                      <div>
+                        <div
+                          className="flex"
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <h3>Name: </h3>
+                          <p className="text-muted">{profileData?.name}</p>
+                        </div>
+                        <div
+                          className="flex"
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <h3>Role: </h3>
+                          <p className="text-muted">{profileData?.role}</p>
+                        </div>
+                        <div
+                          className="flex"
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <h3>Account Status: </h3>
+                          <Typography color={getColorSeverity(profileData?.status)}>
+                            {profileData?.status.charAt(0).toUpperCase() + profileData?.status.slice(1)}
+                          </Typography>
+                        </div>
                       </div>
-                      <div
-                        className="flex"
-                        style={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '1rem',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <h3>Role: </h3>
-                        <p className="text-muted">{profileData?.role}</p>
+                      <Divider />
+                      <div>
+                        <div
+                          className="flex"
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <h3>Email: </h3>
+                          <p className="text-muted">{profileData?.email}</p>
+                        </div>
+                        <div
+                          className="flex"
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <h3>Date Joined: </h3>
+                          <p className="text-muted">{moment(profileData?.date_joined).format('MMMM D, YYYY h:mm A')}</p>
+                        </div>
                       </div>
-                      <div
-                        className="flex"
-                        style={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '1rem',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <h3>Account Status: </h3>
-                        <Typography color={getColorSeverity(profileData?.status)}>
-                          {profileData?.status.charAt(0).toUpperCase() + profileData?.status.slice(1)}
-                        </Typography>
-                      </div>
-                    </div>
-                    <Divider />
-                    <div>
-                      <div
-                        className="flex"
-                        style={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '1rem',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <h3>Email: </h3>
-                        <p className="text-muted">{profileData?.email}</p>
-                      </div>
-                      <div
-                        className="flex"
-                        style={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '1rem',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <h3>Date Joined: </h3>
-                        <p className="text-muted">{moment(profileData?.date_joined).format('MMMM D, YYYY h:mm A')}</p>
-                      </div>
-                    </div>
-                  </TabPanel>
-                  <TabPanel value={tabIndex} index={1}>
-                    <h6>User Points</h6>
-                    <p>Details about user points will go here.</p>
-                  </TabPanel>
-                  <TabPanel value={tabIndex} index={2}>
-                    <h6>Visits</h6>
-                    <p>Details about user visits will go here.</p>
-                  </TabPanel>
+                    </TabPanel>
+                    <TabPanel value={tabIndex} index={1}>
+                      {/* <h6>User Points</h6>
+                      <p>Details about user points will go here.</p> */}
+                      <UserPointsPage userProfileData={profileData} hospitalData={hospitalData} />
+                    </TabPanel>
+                    <TabPanel value={tabIndex} index={2}>
+                      <h6>Visits</h6>
+                      <p>Details about user visits will go here.</p>
+                    </TabPanel>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        </div>
+            </Card>
+          </div>
+        )}
       </div>
 
       <EditForm
