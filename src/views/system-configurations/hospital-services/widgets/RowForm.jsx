@@ -330,7 +330,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                         variant="contained"
                         color="primary"
                       >
-                        {isSubmittingFormData ? <CircularProgress size={24} /> : !!initialData ? 'Edit Account' : 'Create Account'}
+                        {isSubmittingFormData ? <CircularProgress size={24} /> : !!initialData ? 'Edit' : 'Create'}
                       </Button>
                     </AnimateButton>
                   </Grid>

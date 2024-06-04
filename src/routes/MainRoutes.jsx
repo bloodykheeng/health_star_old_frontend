@@ -17,6 +17,7 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 const HospitalPage = Loadable(lazy(() => import('views/hospitals/HospitalsPage')));
 const HospitalViewPage = Loadable(lazy(() => import('views/hospitals/HospitalViewPage')));
+const UserDetailsPage = Loadable(lazy(() => import('views/hospitals/users/user-details/UserDetailsPage')));
 
 //======================= user management ================
 const UsersPage = Loadable(lazy(() => import('views/user-management/users/UsersPage')));
@@ -65,6 +66,10 @@ const MainRoutes = {
         {
           path: 'hospitals/hospital',
           element: <HospitalViewPage />
+        },
+        {
+          path: 'hospitals/hospital/user',
+          element: <UserDetailsPage />
         },
         {
           path: 'services',

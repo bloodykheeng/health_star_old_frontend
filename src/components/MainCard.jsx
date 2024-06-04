@@ -59,6 +59,7 @@ function MainCard(
     >
       {/* card header and action */}
       {!darkTitle && title && <CardHeader sx={headerSX} titleTypographyProps={{ variant: 'subtitle1' }} title={title} action={secondary} />}
+
       {darkTitle && title && <CardHeader sx={headerSX} title={<Typography variant="h3">{title}</Typography>} action={secondary} />}
 
       {/* card content */}
