@@ -193,9 +193,19 @@ function RowForm({
   // const schema = validationSchema(initialData);
   const validationSchema = (initialData) =>
     Yup.object().shape({
-      user: Yup.string().required('User is required'),
-      hospital: Yup.string().nullable(),
-      amount: Yup.number().required('Amount is required'),
+      user: Yup.object()
+        .shape({
+          id: Yup.string().required('User is required'),
+          name: Yup.string().required('User name is required')
+        })
+        .required('User is required'),
+      hospital: Yup.object()
+        .shape({
+          id: Yup.string().nullable(),
+          name: Yup.string().nullable()
+        })
+        .nullable(),
+      amount: Yup.number().required('Number of points is required'),
       price: Yup.number().required('Price is required'),
       payment_method: Yup.string().required('Payment Method is required'),
       details: Yup.string().nullable()
@@ -323,7 +333,7 @@ function RowForm({
 
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="amount">Amount*</InputLabel>
+                      <InputLabel htmlFor="amount">Number of points</InputLabel>
                       <OutlinedInput
                         id="amount"
                         type="number"
@@ -331,7 +341,7 @@ function RowForm({
                         name="amount"
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        placeholder="Enter Amount"
+                        placeholder="Enter Number of points"
                         fullWidth
                         error={Boolean(touched.amount && errors.amount)}
                       />
@@ -365,7 +375,7 @@ function RowForm({
                     </Stack>
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  {/* <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="payment_method">Payment Method*</InputLabel>
                       <OutlinedInput
@@ -385,27 +395,45 @@ function RowForm({
                         </FormHelperText>
                       )}
                     </Stack>
-                  </Grid>
+                  </Grid> */}
 
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="details">Details</InputLabel>
-                      <OutlinedInput
-                        id="details"
-                        type="text"
-                        value={values.details}
-                        name="details"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        placeholder="Enter Details"
-                        fullWidth
-                        error={Boolean(touched.details && errors.details)}
-                      />
-                      {touched.details && errors.details && (
-                        <FormHelperText error id="helper-text-details">
-                          {errors.details}
-                        </FormHelperText>
-                      )}
+                      <InputLabel htmlFor="payment_method">Payment Method*</InputLabel>
+                      <FormControl fullWidth error={Boolean(touched.payment_method && errors.payment_method)}>
+                        <Field name="payment_method">
+                          {({ field }) => (
+                            <Select
+                              id="payment_method"
+                              name="payment_method"
+                              value={values.payment_method}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              displayEmpty
+                            >
+                              <MenuItem value="" disabled>
+                                Select Payment Method
+                              </MenuItem>
+
+                              {[
+                                { value: 'Cash', label: 'Cash' },
+                                { value: 'Credit Card', label: 'Credit Card' },
+                                { value: 'Bank Transfer', label: 'Bank Transfer' }
+                                // Add more options as needed
+                              ].map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          )}
+                        </Field>
+                        {touched.payment_method && errors.payment_method && (
+                          <FormHelperText error id="helper-text-payment_method">
+                            {errors.payment_method}
+                          </FormHelperText>
+                        )}
+                      </FormControl>
                     </Stack>
                   </Grid>
 
@@ -432,21 +460,21 @@ function RowForm({
 
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="description">Description</InputLabel>
+                      <InputLabel htmlFor="details">Details</InputLabel>
                       <TextField
-                        id="description"
-                        label="Description"
+                        id="details"
+                        label="details"
                         multiline
                         rows={4}
-                        value={values.description}
-                        name="description"
+                        value={values.details}
+                        name="details"
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        placeholder="Enter description"
-                        error={Boolean(touched.description && errors.description)}
+                        placeholder="Enter details"
+                        error={Boolean(touched.details && errors.details)}
                         style={{ resize: 'both' }} // Add resize style
                       />
-                      {touched.description && errors.description && <FormHelperText error>{errors.description}</FormHelperText>}
+                      {touched.details && errors.details && <FormHelperText error>{errors.details}</FormHelperText>}
                     </Stack>
                   </Grid>
 

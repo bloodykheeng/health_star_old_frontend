@@ -177,7 +177,7 @@ function ListRecords({ userProfileData, hospitalData }) {
       title: '#',
       width: '5%',
       field: 'id',
-      sorting: false,
+      sorting: true,
       render: (rowData) => {
         return <div>{rowData.tableData.id + 1}</div>;
       }
@@ -185,38 +185,40 @@ function ListRecords({ userProfileData, hospitalData }) {
     {
       title: 'Identifier',
       field: 'identifier',
-      sorting: false,
+      sorting: true,
       hidden: true
     },
     {
       title: 'User',
       field: 'user.name',
-      sorting: false
+      sorting: true
     },
     {
-      title: 'Hospital ID',
+      title: 'Hospital',
       field: 'hospital.name',
-      sorting: false
+      sorting: true
     },
     {
-      title: 'Amount',
+      title: 'No of points',
       field: 'amount',
-      sorting: false
+      sorting: true,
+      render: (rowData) => new Intl.NumberFormat().format(rowData.amount)
     },
     {
       title: 'Price',
       field: 'price',
-      sorting: false
+      sorting: true,
+      render: (rowData) => new Intl.NumberFormat().format(rowData.price)
     },
     {
       title: 'Payment Method',
       field: 'payment_method',
-      sorting: false
+      sorting: true
     },
     {
       title: 'Details',
       field: 'details',
-      sorting: false,
+      sorting: true,
       render: (rowData) => (
         <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{rowData.details}</div>
       )
@@ -224,22 +226,13 @@ function ListRecords({ userProfileData, hospitalData }) {
     {
       title: 'Created By',
       field: 'created_by.email',
-      sorting: false
+      sorting: true
     },
     {
       title: 'Updated By',
       field: 'updated_by.email',
-      sorting: false,
+      sorting: true,
       hidden: true
-    },
-
-    {
-      title: 'Description',
-      field: 'description',
-      sorting: false,
-      render: (rowData) => (
-        <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{rowData.description}</div>
-      )
     }
   ];
 

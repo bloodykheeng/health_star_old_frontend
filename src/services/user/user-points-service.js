@@ -16,7 +16,7 @@ export async function postUserPoint(data) {
 }
 
 export async function updateUserPoint(id, data) {
-  const response = await axiosAPI.post(`user-points/${id}`, data);
+  const response = await axiosAPI.put(`user-points/${id}`, data);
   return response;
 }
 

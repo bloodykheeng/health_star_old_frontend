@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 import {
-  getAllHospitalServices,
-  getHospitalServiceById,
-  postHospitalService,
-  updateHospitalService,
-  deleteHospitalServiceById
-} from '../../../../../services/system-configurations/hospital-services-service.js';
+  getAllUserPoints,
+  getUserPointById,
+  postUserPoint,
+  updateUserPoint,
+  deleteUserPointById
+} from '../../../../../services/user/user-points-service';
 import { CircularProgress } from '@mui/material';
 import RowForm from './widgets/RowForm';
 
@@ -21,9 +21,9 @@ function CreateRecord({ show, onHide, onClose, userProfileData, hospitalData }) 
   const queryClient = useQueryClient();
 
   const creactMutation = useMutation({
-    mutationFn: postHospitalService,
+    mutationFn: postUserPoint,
     onSuccess: () => {
-      queryClient.invalidateQueries(['hospital-services']);
+      queryClient.invalidateQueries(['user-points']);
       toast.success('created Successfully');
       setCreateMutationIsLoading(false);
       setIsSubmittingFormData(false);
@@ -46,8 +46,9 @@ function CreateRecord({ show, onHide, onClose, userProfileData, hospitalData }) 
   const handleSubmit = async (data) => {
     setCreateMutationIsLoading(true);
     // event.preventDefault();
-    console.log('data we are submitting while creating a hospital services : ', data);
-    creactMutation.mutate(data);
+    console.log('data we are submitting while creating a user points : ', data);
+    let finalData = { ...data, user_id: data?.user?.id, hospital_id: data?.hospital?.id };
+    creactMutation.mutate(finalData);
   };
 
   return (

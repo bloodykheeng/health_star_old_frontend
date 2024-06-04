@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 import {
-  getAllHospitalServices,
-  getHospitalServiceById,
-  postHospitalService,
-  updateHospitalService,
-  deleteHospitalServiceById
-} from '../../../../../services/system-configurations/hospital-services-service.js';
+  getAllUserPoints,
+  getUserPointById,
+  postUserPoint,
+  updateUserPoint,
+  deleteUserPointById
+} from '../../../../../services/user/user-points-service';
 import { CircularProgress } from '@mui/material';
 import RowForm from './widgets/RowForm';
 
@@ -21,11 +21,11 @@ function EditRecord({ show, onHide, onClose, rowData, userProfileData, hospitalD
   const queryClient = useQueryClient();
 
   const editMutation = useMutation({
-    mutationFn: (variables) => updateHospitalService(rowData?.id, variables),
+    mutationFn: (variables) => updateUserPoint(rowData?.id, variables),
     onSuccess: () => {
       onClose();
       toast.success('Edited Successfully');
-      queryClient.invalidateQueries(['hospital-services']);
+      queryClient.invalidateQueries(['user-points']);
       setEditMutationIsLoading(false);
       setIsSubmittingFormData(false);
     },
@@ -43,26 +43,13 @@ function EditRecord({ show, onHide, onClose, rowData, userProfileData, hospitalD
   });
 
   const handleSubmit = async (data) => {
-    const formData = new FormData();
-    formData.append('_method', 'PUT');
-    formData.append('name', data.name);
-    formData.append('status', data.status);
-    formData.append('description', data.description);
-
-    // Assuming 'photo' is a file field; it should be handled by the onFileUpload function
-    if (data.photo) {
-      formData.append('photo', data.photo);
-    }
-
-    // Log formData keys and values for debugging
-    // formData.forEach((value, key) => {
-    //     console.log(`${key}: ${value}`);
-    // });
-
-    setEditMutationIsLoading(true);
     // event.preventDefault();
+    setEditMutationIsLoading(true);
+
+    let finalData = { ...data, user_id: data?.user?.id, hospital_id: data?.hospital?.id };
+
     console.log('data we are submitting while creating a Hospital services : ', data);
-    editMutation.mutate(formData);
+    editMutation.mutate(finalData);
   };
 
   return (
