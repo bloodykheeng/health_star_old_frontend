@@ -27,6 +27,7 @@ import {
 } from '../../../../services/auth/user-service';
 
 import UserPointsPage from './user-points/UserPointsPage';
+import UserVisitsPage from './visits/UserVisitsPage';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -240,8 +241,10 @@ function UserDetailsPage({ loggedInUserData }) {
                       <UserPointsPage userProfileData={profileData} hospitalData={hospitalData} />
                     </TabPanel>
                     <TabPanel value={tabIndex} index={2}>
-                      <h6>Visits</h6>
-                      <p>Details about user visits will go here.</p>
+                      {/* <h6>Visits</h6>
+                      <p>Details about user visits will go here.</p> */}
+
+                      <UserVisitsPage userProfileData={profileData} hospitalData={hospitalData} />
                     </TabPanel>
                   </div>
                 </div>
