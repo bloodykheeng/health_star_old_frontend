@@ -200,9 +200,9 @@ function ListRecords({ userProfileData, hospitalData }) {
     },
     {
       title: 'No of points',
-      field: 'amount',
+      field: 'no_of_points',
       sorting: true,
-      render: (rowData) => new Intl.NumberFormat().format(rowData.amount)
+      render: (rowData) => new Intl.NumberFormat().format(rowData.no_of_points)
     },
     {
       title: 'Price',

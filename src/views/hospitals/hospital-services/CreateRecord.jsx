@@ -32,7 +32,11 @@ function CreateRecord({ hospitalData, show, onHide, onClose }) {
     onError: (error) => {
       setCreateMutationIsLoading(false);
       setIsSubmittingFormData(false);
-      toast.error('An error occurred, please try again');
+      error?.response?.data?.message
+        ? toast.error(error?.response?.data?.message)
+        : !error?.response
+          ? toast.warning('Check Your Internet Connection Please')
+          : toast.error('An Error Occured Please Contact Admin');
       console.log('Error:', error);
     }
   });

@@ -16,7 +16,7 @@ export async function postHospitalService(data) {
 }
 
 export async function updateHospitalService(id, data) {
-  const response = await axiosAPI.post(`hospital-services/${id}`, data);
+  const response = await axiosAPI.put(`hospital-services/${id}`, data);
   return response;
 }
 

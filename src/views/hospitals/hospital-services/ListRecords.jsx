@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
-import CreateRecord from './CreateRecord';
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 
 import {
   getAllHospitalServices,
@@ -9,6 +9,9 @@ import {
   updateHospitalService,
   deleteHospitalServiceById
 } from '../../../services/hospital/hospital-services-service';
+
+import EditRecord from './EditRecord';
+import CreateRecord from './CreateRecord';
 
 import moment from 'moment';
 import { Link, useNavigate } from 'react-router-dom';
@@ -38,28 +41,36 @@ import { Delete as DeleteIcon } from '@mui/icons-material';
 //============ get Auth Context ===============
 import useAuthContext from '../../../context/AuthContext';
 
-const hospitalServices = [
-  { id: 1, name: 'Emergency Room' },
-  { id: 2, name: 'Cardiology' },
-  { id: 3, name: 'Neurology' },
-  { id: 4, name: 'Pediatrics' },
-  { id: 5, name: 'Radiology' }
-];
-
 function ListRecords({ hospitalData }) {
   const { user: loggedInUserData, logoutMutation, logoutMutationIsLoading } = useAuthContext();
   console.log('🚀 ~ ListRecords ~ loggedInUserData:', loggedInUserData);
 
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [selectedItem, setSelectedItem] = useState({ id: null });
+  const [tableQueryObject, setTableQueryObject] = useState();
+  console.log('🚀 ~ ListRecords ~ tableQueryObject:', tableQueryObject);
 
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleAttachServices = () => {
-    setModalOpen(true);
+  const [userDetail, setUserDetail] = useState();
+
+  const handleShowEditForm = (item) => {
+    setSelectedItem(item);
+    setShowEditForm(true);
+  };
+  const handleCloseEditForm = () => {
+    setSelectedItem({ id: null });
+    setShowEditForm(false);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const handleShowUserForm = () => {
+    setShowCreateForm(true);
+  };
+  const handleCloseUserForm = () => {
+    setShowCreateForm(false);
   };
 
   const getListOfHospitalServices = useQuery({
@@ -67,40 +78,40 @@ function ListRecords({ hospitalData }) {
     queryFn: () => getAllHospitalServices({ hospital_id: hospitalData?.id })
   });
 
-  //   //=================== handle table server side rendering ==================
-  //   const [pageParam, setPageParam] = useState(1);
-  //   const [search, setSearch] = useState();
-  //   const [pageSize, setpageSize] = useState();
-  //   const [orderBy, setOrderBy] = useState();
-  //   const [orderDirection, setOrderDirection] = useState();
-  //   console.log('🚀 ~ ListRecords ~ orderDirection:', orderDirection);
+  // //=================== handle table server side rendering ==================
+  // const [pageParam, setPageParam] = useState(1);
+  // const [search, setSearch] = useState();
+  // const [pageSize, setpageSize] = useState();
+  // const [orderBy, setOrderBy] = useState();
+  // const [orderDirection, setOrderDirection] = useState();
+  // console.log('🚀 ~ ListRecords ~ orderDirection:', orderDirection);
 
-  //   const getListOfHospitalServicesRef = useRef();
+  // const getListOfHospitalServicesRef = useRef();
 
-  //   const getListOfHospitalServices = useQuery({
-  //     queryKey: ['hospitals', pageSize, pageParam, search, orderBy],
-  //     queryFn: () =>
-  //       getAllHospitals({ per_page: pageSize, page: pageParam, search: search, orderBy: orderBy, orderDirection: orderDirection })
-  //   });
+  // const getListOfHospitalServices = useQuery({
+  //   queryKey: ['hospitals', pageSize, pageParam, search, orderBy],
+  //   queryFn: () =>
+  //     getAllHospitals({ per_page: pageSize, page: pageParam, search: search, orderBy: orderBy, orderDirection: orderDirection })
+  // });
 
-  //   const handleMaterialTableQueryPromise = async (query) => {
-  //     console.log('🚀 ~ handleMaterialTableQueryPromise ~ query:', query);
+  // const handleMaterialTableQueryPromise = async (query) => {
+  //   console.log('🚀 ~ handleMaterialTableQueryPromise ~ query:', query);
 
-  //     setPageParam(query.page + 1); // MaterialTable uses 0-indexed pages
-  //     setpageSize(query.pageSize);
-  //     // eslint-disable-next-line no-extra-boolean-cast
-  //     setSearch(query.search);
-  //     setOrderBy(query?.orderBy?.field);
-  //     setOrderDirection(query?.orderDirection);
+  //   setPageParam(query.page + 1); // MaterialTable uses 0-indexed pages
+  //   setpageSize(query.pageSize);
+  //   // eslint-disable-next-line no-extra-boolean-cast
+  //   setSearch(query.search);
+  //   setOrderBy(query?.orderBy?.field);
+  //   setOrderDirection(query?.orderDirection);
 
-  //     return;
-  //   };
+  //   return;
+  // };
 
-  //   //===================end handle table server side rendering ==================
+  // //===================end handle table server side rendering ==================
 
   useEffect(() => {
     if (getListOfHospitalServices?.isError) {
-      console.log('Error fetching List of Hospitals :', getListOfHospitalServices?.error);
+      console.log('Error fetching List of User points :', getListOfHospitalServices?.error);
       getListOfHospitalServices?.error?.response?.data?.message
         ? toast.error(getListOfHospitalServices?.error?.response?.data?.message)
         : !getListOfHospitalServices?.error?.response
@@ -108,7 +119,7 @@ function ListRecords({ hospitalData }) {
           : toast.error('An Error Occured Please Contact Admin');
     }
   }, [getListOfHospitalServices?.isError]);
-  console.log('getListOfHospitalServices list : ', getListOfHospitalServices?.data?.data);
+  console.log('User Points list : ', getListOfHospitalServices?.data?.data);
 
   const [deleteItemMutationIsLoading, setDeleteItemMutationIsLoading] = useState(false);
 
@@ -163,6 +174,8 @@ function ListRecords({ hospitalData }) {
     setItemToDeleteId(null);
   };
 
+  let tableId = 0;
+
   const columns = [
     {
       title: '#',
@@ -177,29 +190,38 @@ function ListRecords({ hospitalData }) {
       title: 'Name',
       field: 'service.name',
       sorting: false
+    },
+    {
+      title: 'No of points',
+      field: 'no_of_points',
+      sorting: true,
+      render: (rowData) => new Intl.NumberFormat().format(rowData.no_of_points)
+    },
+    {
+      title: 'Created By',
+      field: 'created_by.email',
+      sorting: true
+    },
+    {
+      title: 'Updated By',
+      field: 'updated_by.email',
+      sorting: true,
+      hidden: true
     }
   ];
 
   return (
-    <div>
-      <Box sx={{ width: '100%' }}>
-        <Grid container>
-          <Grid item xs={12}>
-            <Box sx={{ height: '3rem', m: 1, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-              {loggedInUserData?.permissions?.includes('create') && (
-                <Button variant="contained" color="primary" onClick={handleAttachServices}>
-                  Attach Hospital Services
-                </Button>
-              )}
-            </Box>
-            {/* <h1>Hospital Services</h1>
-            <ul>
-              {hospitalServices.map((service) => (
-                <li key={service.id}>{service.name}</li>
-              ))}
-            </ul> */}
-
-            {/* <ServerSideMuiTable
+    <Box sx={{ width: '100%' }}>
+      <Grid container>
+        <Grid item xs={12}>
+          <Box sx={{ height: '3rem', m: 1, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            {loggedInUserData?.permissions?.includes('create') && (
+              <Button onClick={handleShowUserForm} variant="contained" color="primary">
+                Attach Hospital Services
+              </Button>
+            )}
+          </Box>
+          {/* <ServerSideMuiTable
             tableTitle="Hospitals"
             tableData={getListOfHospitalServices?.data?.data ?? []}
             tableColumns={columns}
@@ -214,33 +236,44 @@ function ListRecords({ hospitalData }) {
             handleMaterialTableQueryPromise={handleMaterialTableQueryPromise}
           /> */}
 
-            <ClientSideMuiTable
-              tableTitle="Hospital Services"
-              tableData={getListOfHospitalServices?.data?.data ?? []}
-              tableColumns={columns}
-              showEdit={false}
-              //   handleShowEditForm={handleShowEditForm}
-              showDelete={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('delete')}
-              handleDelete={(e, item_id) => handleDelete(e, item_id)}
-              loading={
-                getListOfHospitalServices?.isLoading || getListOfHospitalServices?.status === 'loading' || deleteItemMutationIsLoading
-              }
-              //
-              // handleViewPage={(rowData) => {
-              //   navigate('hospital', { state: { hospitalData: rowData } });
-              // }}
-              showViewPage={false}
-              hideRowViewPage={false}
-            />
+          <ClientSideMuiTable
+            tableTitle="Hospital Services"
+            tableData={getListOfHospitalServices?.data?.data ?? []}
+            tableColumns={columns}
+            handleShowEditForm={handleShowEditForm}
+            handleDelete={(e, item_id) => handleDelete(e, item_id)}
+            showEdit={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('update')}
+            showDelete={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('delete')}
+            loading={getListOfHospitalServices?.isLoading || getListOfHospitalServices?.status === 'loading' || deleteItemMutationIsLoading}
+            //
+            // handleViewPage={(rowData) => {
+            //   navigate('hospital-service', { state: { hospitalData: rowData } });
+            // }}
+            showViewPage={false}
+            hideRowViewPage={false}
+          />
 
-            <CreateRecord hospitalData={hospitalData} show={isModalOpen} onHide={handleCloseModal} onClose={handleCloseModal} />
-          </Grid>
+          <EditRecord
+            rowData={selectedItem}
+            show={showEditForm}
+            onHide={handleCloseEditForm}
+            onClose={handleCloseEditForm}
+            loggedInUserData={loggedInUserData}
+            hospitalData={hospitalData}
+          />
+          <CreateRecord
+            show={showCreateForm}
+            onHide={handleCloseUserForm}
+            onClose={handleCloseUserForm}
+            loggedInUserData={loggedInUserData}
+            hospitalData={hospitalData}
+          />
         </Grid>
-      </Box>
+      </Grid>
 
       <Dialog open={deleteDialogOpen} onClose={cancelDelete}>
         <DialogTitle>Confirmation</DialogTitle>
-        <DialogContent>Are you sure you want to detach this service ?</DialogContent>
+        <DialogContent>Are you sure you want to delete this record ?</DialogContent>
         <DialogActions>
           <Button onClick={cancelDelete} color="primary">
             Cancel
@@ -250,7 +283,7 @@ function ListRecords({ hospitalData }) {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 }
 

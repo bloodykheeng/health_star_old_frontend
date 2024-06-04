@@ -205,7 +205,7 @@ function RowForm({
           name: Yup.string().nullable()
         })
         .nullable(),
-      amount: Yup.number().required('Number of points is required'),
+      no_of_points: Yup.number().required('Number of points is required'),
       price: Yup.number().required('Price is required'),
       payment_method: Yup.string().required('Payment Method is required'),
       details: Yup.string().nullable()
@@ -219,7 +219,7 @@ function RowForm({
             initialValues={{
               user: initialData?.user || userProfileData || null,
               hospital: initialData?.hospital || hospitalData || null,
-              amount: initialData?.amount || '',
+              no_of_points: initialData?.no_of_points || '',
               price: initialData?.price || '',
               payment_method: initialData?.payment_method || '',
               details: initialData?.details || '',
@@ -333,21 +333,21 @@ function RowForm({
 
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="amount">Number of points</InputLabel>
+                      <InputLabel htmlFor="no_of_points">Number of points</InputLabel>
                       <OutlinedInput
-                        id="amount"
+                        id="no_of_points"
                         type="number"
-                        value={values.amount}
-                        name="amount"
+                        value={values.no_of_points}
+                        name="no_of_points"
                         onBlur={handleBlur}
                         onChange={handleChange}
                         placeholder="Enter Number of points"
                         fullWidth
-                        error={Boolean(touched.amount && errors.amount)}
+                        error={Boolean(touched.no_of_points && errors.no_of_points)}
                       />
-                      {touched.amount && errors.amount && (
-                        <FormHelperText error id="helper-text-amount">
-                          {errors.amount}
+                      {touched.no_of_points && errors.no_of_points && (
+                        <FormHelperText error id="helper-text-no_of_points">
+                          {errors.no_of_points}
                         </FormHelperText>
                       )}
                     </Stack>

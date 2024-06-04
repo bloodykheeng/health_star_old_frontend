@@ -27,7 +27,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/lab';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 // third party
 import * as Yup from 'yup';
@@ -125,6 +125,19 @@ function RowForm({
     queryKey: ['hospital-services', 'by-hospital-id', hospitalData?.id],
     queryFn: () => getAllHospitalServices({ hospital_id: hospitalData?.id })
   });
+  console.log('🚀 ~ getListOfHospitalServices:', getListOfHospitalServices);
+
+  useEffect(() => {
+    if (getListOfHospitalServices?.isError) {
+      console.log('Error fetching List of User points :', getListOfHospitalServices?.error);
+      getListOfHospitalServices?.error?.response?.data?.message
+        ? toast.error(getListOfHospitalServices?.error?.response?.data?.message)
+        : !getListOfHospitalServices?.error?.response
+          ? toast.warning('Check Your Internet Connection Please')
+          : toast.error('An Error Occured Please Contact Admin');
+    }
+  }, [getListOfHospitalServices?.isError]);
+  console.log('getListOfHospitalServices list : ', getListOfHospitalServices?.data?.data);
 
   //==================== get hospitals ===========================
   //

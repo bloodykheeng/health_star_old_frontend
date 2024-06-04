@@ -43,7 +43,7 @@ function CreateRecord({ show, onHide, onClose, userProfileData, hospitalData }) 
 
     let finalData = { ...data, user_id: data?.user?.id, hospital_id: data?.hospital?.id };
     console.log('data we are submitting while creating a visit : ', finalData);
-    // creactMutation.mutate(finalData);
+    creactMutation.mutate(finalData);
   };
 
   return (

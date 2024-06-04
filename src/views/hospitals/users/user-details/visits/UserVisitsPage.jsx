@@ -11,7 +11,7 @@ import BreadcrumbNav from '../../../../../components/general_components/Breadcru
 function UserVisitsPage({ userProfileData, hospitalData }) {
   return (
     <>
-      <BreadcrumbNav />
+      {/* <BreadcrumbNav /> */}
       <MainCard title="User Visits">
         <ListRecords userProfileData={userProfileData} hospitalData={hospitalData} />
       </MainCard>

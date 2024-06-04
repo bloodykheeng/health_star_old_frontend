@@ -112,7 +112,7 @@ function ListRecords({ userProfileData, hospitalData }) {
           : toast.error('An Error Occured Please Contact Admin');
     }
   }, [getListOfUserVisits?.isError]);
-  console.log('User Points list : ', getListOfUserVisits?.data?.data);
+  console.log('User getListOfUserVisits Points list : ', getListOfUserVisits?.data?.data);
 
   const [deleteItemMutationIsLoading, setDeleteItemMutationIsLoading] = useState(false);
 
@@ -190,13 +190,13 @@ function ListRecords({ userProfileData, hospitalData }) {
       title: 'Start Date',
       field: 'start_date',
       sorting: true,
-      render: (rowData) => moment(rowData.start_date).format('MM/DD/YYYY')
+      render: (rowData) => moment(rowData.start_date).format('MM/DD/YYYY h:mm:ss A')
     },
     {
       title: 'End Date',
       field: 'end_date',
       sorting: true,
-      render: (rowData) => moment(rowData.end_date).format('MM/DD/YYYY')
+      render: (rowData) => moment(rowData.end_date).format('MM/DD/YYYY h:mm:ss A')
     },
     {
       title: 'Purpose',
@@ -299,7 +299,7 @@ function ListRecords({ userProfileData, hospitalData }) {
 
       <Dialog open={deleteDialogOpen} onClose={cancelDelete}>
         <DialogTitle>Confirmation</DialogTitle>
-        <DialogContent>Are you sure you want to delete this user?</DialogContent>
+        <DialogContent>Are you sure you want to delete this Record?</DialogContent>
         <DialogActions>
           <Button onClick={cancelDelete} color="primary">
             Cancel
