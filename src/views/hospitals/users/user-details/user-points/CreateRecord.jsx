@@ -53,7 +53,7 @@ function CreateRecord({ show, onHide, onClose, userProfileData, hospitalData }) 
 
   return (
     <Dialog open={show} onClose={onHide} maxWidth="sm" fullWidth>
-      <DialogTitle>Add Hospital Service</DialogTitle>
+      <DialogTitle>Add User Points</DialogTitle>
       <DialogContent dividers>
         <RowForm
           handleSubmittingFormData={handleSubmit}

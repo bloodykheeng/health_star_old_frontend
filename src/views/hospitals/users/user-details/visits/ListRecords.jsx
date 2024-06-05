@@ -225,16 +225,7 @@ function ListRecords({ userProfileData, hospitalData }) {
       sorting: true,
       render: (rowData) => new Intl.NumberFormat().format(rowData.no_of_points)
     },
-    {
-      title: 'Purpose',
-      field: 'purpose',
-      sorting: true
-    },
-    {
-      title: 'Doctor Name',
-      field: 'doctor_name',
-      sorting: true
-    },
+
     {
       title: 'Details',
       field: 'details',
@@ -266,7 +257,7 @@ function ListRecords({ userProfileData, hospitalData }) {
       <Grid container>
         <Grid item xs={12}>
           <Box sx={{ height: '3rem', m: 1, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            {loggedInUserData?.permissions?.includes('create') && (
+            {loggedInUserData?.permissions?.includes('create user visits') && (
               <Button onClick={handleShowUserForm} variant="contained" color="primary">
                 Add User Visits
               </Button>
@@ -293,8 +284,8 @@ function ListRecords({ userProfileData, hospitalData }) {
             tableColumns={columns}
             handleShowEditForm={handleShowEditForm}
             handleDelete={(e, item_id) => handleDelete(e, item_id)}
-            showEdit={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('update')}
-            showDelete={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('delete')}
+            showEdit={loggedInUserData?.permissions.includes('edit user visits')}
+            showDelete={loggedInUserData?.permissions.includes('delete user visits')}
             loading={getListOfUserVisits?.isLoading || getListOfUserVisits?.status === 'loading' || deleteItemMutationIsLoading}
             //
             // handleViewPage={(rowData) => {

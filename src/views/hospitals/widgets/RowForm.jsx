@@ -138,6 +138,10 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
       address: Yup.string().max(255).nullable(),
       city: Yup.string().max(255).nullable(),
       state: Yup.string().max(255).nullable(),
+      points_percentage_value: Yup.number()
+        .required('Points Conversion Percentage is required')
+        .min(1, 'Points Conversion Percentage must be at least 1')
+        .max(100, 'Points Conversion Percentage cannot exceed 100'),
       photo_url: Yup.mixed().nullable(),
       country: Yup.string().max(255).nullable(),
       zip_code: Yup.string().max(20).nullable(),
@@ -358,6 +362,24 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                       />
                       {touched.website && errors.website && <FormHelperText error>{errors.website}</FormHelperText>}
                     </Stack>
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <InputLabel htmlFor="points_percentage_value">Points Conversion Percentage*</InputLabel>
+                    <Field
+                      as={OutlinedInput}
+                      id="points_percentage_value"
+                      name="points_percentage_value"
+                      type="number"
+                      placeholder="Enter Points Conversion Percentage value"
+                      fullWidth
+                      error={Boolean(touched.points_percentage_value && errors.points_percentage_value)}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                    />
+                    {touched.points_percentage_value && errors.points_percentage_value && (
+                      <FormHelperText error>{errors.points_percentage_value}</FormHelperText>
+                    )}
                   </Grid>
 
                   <Grid item xs={12} md={6}>

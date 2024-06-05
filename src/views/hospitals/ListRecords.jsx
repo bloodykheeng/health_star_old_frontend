@@ -42,7 +42,9 @@ import useAuthContext from '../../context/AuthContext';
 
 function ListRecords() {
   const { user: loggedInUserData, logoutMutation, logoutMutationIsLoading } = useAuthContext();
-  console.log('🚀 ~ ListRecords ~ loggedInUserData:', loggedInUserData);
+  console.log('🚀dd ~ ListRecords ~ loggedInUserData:', loggedInUserData);
+
+  let getByLoggedInUser = ['Health Facility Manager', 'Patient'].includes(loggedInUserData?.role);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -83,9 +85,16 @@ function ListRecords() {
   const getListOfHospitalsRef = useRef();
 
   const getListOfHospitals = useQuery({
-    queryKey: ['hospitals', pageSize, pageParam, search, orderBy],
+    queryKey: ['hospitals', pageSize, pageParam, search, orderBy, getByLoggedInUser],
     queryFn: () =>
-      getAllHospitals({ per_page: pageSize, page: pageParam, search: search, orderBy: orderBy, orderDirection: orderDirection })
+      getAllHospitals({
+        per_page: pageSize,
+        page: pageParam,
+        search: search,
+        orderBy: orderBy,
+        orderDirection: orderDirection,
+        get_by_logged_in_user: getByLoggedInUser
+      })
   });
 
   const handleMaterialTableQueryPromise = async (query) => {
@@ -194,14 +203,21 @@ function ListRecords() {
       sorting: true
     },
     {
+      title: 'Percentage Value',
+      field: 'points_percentage_value',
+      sorting: true
+    },
+    {
       title: 'State',
       field: 'state',
-      sorting: true
+      sorting: true,
+      hidden: true
     },
     {
       title: 'Photo',
       field: 'photo_url',
       sorting: true,
+      hidden: true,
       render: (rowData) =>
         rowData.photo_url ? (
           <img src={`${import.meta.env.VITE_APP_API_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" />
@@ -212,17 +228,20 @@ function ListRecords() {
     {
       title: 'Country',
       field: 'country',
-      sorting: true
+      sorting: true,
+      hidden: true
     },
     {
       title: 'Zip Code',
       field: 'zip_code',
-      sorting: true
+      sorting: true,
+      hidden: true
     },
     {
       title: 'Phone Number',
       field: 'phone_number',
-      sorting: true
+      sorting: true,
+      hidden: true
     },
     {
       title: 'Slug',
@@ -233,11 +252,13 @@ function ListRecords() {
     {
       title: 'Email',
       field: 'email',
-      sorting: true
+      sorting: true,
+      hidden: true
     },
     {
       title: 'Website',
       field: 'website',
+      hidden: true,
       sorting: true,
       render: (rowData) => (
         <a href={rowData.website} target="_blank" rel="noopener noreferrer">
@@ -249,6 +270,7 @@ function ListRecords() {
     {
       title: 'Capacity',
       field: 'capacity',
+      hidden: true,
       render: (rowData) => {
         return <div>{rowData.capacity ? parseInt(rowData.capacity).toLocaleString() : 'N/A'}</div>;
       }
@@ -256,6 +278,7 @@ function ListRecords() {
     {
       title: 'Status',
       field: 'status',
+      hidden: true,
       sorting: true,
       render: (rowData) => <span style={{ color: rowData.status === 'active' ? 'green' : 'red' }}>{rowData.status}</span>
     }
@@ -266,7 +289,7 @@ function ListRecords() {
       <Grid container>
         <Grid item xs={12}>
           <Box sx={{ height: '3rem', m: 1, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            {loggedInUserData?.permissions?.includes('create') && (
+            {loggedInUserData?.permissions?.includes('create hospitals') && (
               <Button onClick={handleShowUserForm} variant="contained" color="primary">
                 Add Hospital
               </Button>
@@ -293,14 +316,14 @@ function ListRecords() {
             tableColumns={columns}
             handleShowEditForm={handleShowEditForm}
             handleDelete={(e, item_id) => handleDelete(e, item_id)}
-            showEdit={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('update')}
-            showDelete={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('delete')}
+            showEdit={loggedInUserData?.permissions.includes('edit hospitals')}
+            showDelete={loggedInUserData?.permissions.includes('delete hospitals')}
             loading={getListOfHospitals?.isLoading || getListOfHospitals?.status === 'loading' || deleteItemMutationIsLoading}
             //
             handleViewPage={(rowData) => {
               navigate('hospital', { state: { hospitalData: rowData } });
             }}
-            showViewPage={true}
+            showViewPage={loggedInUserData?.permissions.includes('view hospitals')}
             hideRowViewPage={false}
           />
 

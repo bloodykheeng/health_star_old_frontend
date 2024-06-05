@@ -236,8 +236,7 @@ function RowForm({
         .nullable(),
       start_date: Yup.date().required('Start date is required'),
       end_date: Yup.date().nullable().min(Yup.ref('start_date'), 'End date cannot be before start date'),
-      purpose: Yup.string().nullable(),
-      doctor_name: Yup.string().nullable(),
+
       details: Yup.string().nullable(),
       status: Yup.string().required('Status is required')
     });
@@ -265,8 +264,7 @@ function RowForm({
               hospital: initialData?.hospital || hospitalData || null,
               start_date: initialData?.start_date || '',
               end_date: initialData?.end_date || '',
-              purpose: initialData?.purpose || '',
-              doctor_name: initialData?.doctor_name || '',
+
               details: initialData?.details || '',
               status: initialData?.status || '',
               visit_services: initialData?.hospital_services || [],
@@ -430,52 +428,6 @@ function RowForm({
                     </Field>
                   </Grid>
 
-                  {/* Purpose Field */}
-                  <Grid item xs={12} md={6}>
-                    <Stack spacing={1}>
-                      <InputLabel htmlFor="purpose">Purpose</InputLabel>
-                      <OutlinedInput
-                        id="purpose"
-                        type="text"
-                        value={values.purpose}
-                        name="purpose"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        placeholder="Enter Purpose"
-                        fullWidth
-                        error={Boolean(touched.purpose && errors.purpose)}
-                      />
-                      {touched.purpose && errors.purpose && (
-                        <FormHelperText error id="helper-text-purpose">
-                          {errors.purpose}
-                        </FormHelperText>
-                      )}
-                    </Stack>
-                  </Grid>
-
-                  {/* Doctor Name Field */}
-                  <Grid item xs={12} md={6}>
-                    <Stack spacing={1}>
-                      <InputLabel htmlFor="doctor_name">Doctor Name</InputLabel>
-                      <OutlinedInput
-                        id="doctor_name"
-                        type="text"
-                        value={values.doctor_name}
-                        name="doctor_name"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        placeholder="Enter Doctor Name"
-                        fullWidth
-                        error={Boolean(touched.doctor_name && errors.doctor_name)}
-                      />
-                      {touched.doctor_name && errors.doctor_name && (
-                        <FormHelperText error id="helper-text-doctor_name">
-                          {errors.doctor_name}
-                        </FormHelperText>
-                      )}
-                    </Stack>
-                  </Grid>
-
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="status">Status*</InputLabel>
@@ -620,7 +572,7 @@ function RowForm({
                         variant="contained"
                         color="primary"
                       >
-                        {isSubmittingFormData ? <CircularProgress size={24} /> : !!initialData ? 'Edit' : 'Create'}
+                        {isSubmittingFormData ? <CircularProgress size={24} /> : !!initialData ? 'Update Visit' : 'Create Visit'}
                       </Button>
                     </AnimateButton>
                   </Grid>

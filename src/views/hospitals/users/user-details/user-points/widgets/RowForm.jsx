@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable no-extra-boolean-cast */
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -190,6 +190,11 @@ function RowForm({
     }
   };
 
+  // Callback function to calculate points
+  const calculatePoints = useCallback((price, pointsPercentage) => {
+    return price * (pointsPercentage / 100);
+  }, []);
+
   // const schema = validationSchema(initialData);
   const validationSchema = (initialData) =>
     Yup.object().shape({
@@ -344,6 +349,7 @@ function RowForm({
                         placeholder="Enter Number of points"
                         fullWidth
                         error={Boolean(touched.no_of_points && errors.no_of_points)}
+                        disabled
                       />
                       {touched.no_of_points && errors.no_of_points && (
                         <FormHelperText error id="helper-text-no_of_points">
@@ -362,7 +368,13 @@ function RowForm({
                         value={values.price}
                         name="price"
                         onBlur={handleBlur}
-                        onChange={handleChange}
+                        // onChange={handleChange}
+                        onChange={(e) => {
+                          const { value } = e.target;
+                          const points = calculatePoints(parseFloat(value), parseFloat(values?.hospital?.points_percentage_value || 1));
+                          setFieldValue('no_of_points', points.toFixed(2)); // Update no_of_points field
+                          handleChange(e); // Call Formik's default handleChange
+                        }}
                         placeholder="Enter Price"
                         fullWidth
                         error={Boolean(touched.price && errors.price)}
@@ -494,7 +506,7 @@ function RowForm({
                         variant="contained"
                         color="primary"
                       >
-                        {isSubmittingFormData ? <CircularProgress size={24} /> : !!initialData ? 'Edit' : 'Create'}
+                        {isSubmittingFormData ? <CircularProgress size={24} /> : !!initialData ? 'Update Points' : 'Add Points'}
                       </Button>
                     </AnimateButton>
                   </Grid>

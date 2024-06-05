@@ -245,7 +245,7 @@ function ListRecords({ hospitalData }) {
       <Grid container>
         <Grid item xs={12}>
           <Box sx={{ height: '3rem', m: 1, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            {loggedInUserData?.permissions?.includes('create') && (
+            {loggedInUserData?.permissions?.includes('create hospital users') && (
               <Button onClick={handleShowUserForm} variant="contained" color="primary">
                 Add user
               </Button>
@@ -272,14 +272,14 @@ function ListRecords({ hospitalData }) {
             tableColumns={columns}
             handleShowEditForm={handleShowEditForm}
             handleDelete={(e, item_id) => handleDelete(e, item_id)}
-            showEdit={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('update')}
-            showDelete={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('delete')}
+            showEdit={loggedInUserData?.permissions.includes('edit hospital users')}
+            showDelete={loggedInUserData?.permissions.includes('delete hospital users')}
             loading={getListOfUsers?.isLoading || getListOfUsers?.status === 'loading' || deleteUserMutationIsLoading}
             //
             handleViewPage={(rowData) => {
               navigate('user', { state: { userData: rowData, hospitalData: hospitalData } });
             }}
-            showViewPage={true}
+            showViewPage={loggedInUserData?.permissions.includes('view hospital users')}
             hideRowViewPage={false}
           />
           <UserDetailsModal user={userDetail} showModal={userDetailShowModal} handleCloseModal={handleCloseUserDetailModal} />

@@ -215,7 +215,7 @@ function ListRecords({ hospitalData }) {
       <Grid container>
         <Grid item xs={12}>
           <Box sx={{ height: '3rem', m: 1, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            {loggedInUserData?.permissions?.includes('create') && (
+            {loggedInUserData?.permissions?.includes('create hospital services') && (
               <Button onClick={handleShowUserForm} variant="contained" color="primary">
                 Attach Hospital Services
               </Button>
@@ -242,8 +242,8 @@ function ListRecords({ hospitalData }) {
             tableColumns={columns}
             handleShowEditForm={handleShowEditForm}
             handleDelete={(e, item_id) => handleDelete(e, item_id)}
-            showEdit={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('update')}
-            showDelete={['Admin'].includes(loggedInUserData?.role) && loggedInUserData?.permissions.includes('delete')}
+            showEdit={loggedInUserData?.permissions.includes('edit hospital services')}
+            showDelete={loggedInUserData?.permissions.includes('delete hospital services')}
             loading={getListOfHospitalServices?.isLoading || getListOfHospitalServices?.status === 'loading' || deleteItemMutationIsLoading}
             //
             // handleViewPage={(rowData) => {

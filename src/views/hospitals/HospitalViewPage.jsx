@@ -87,44 +87,38 @@ function HospitalViewPage() {
         </div>
       ) : (
         <Paper elevation={3}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={value} onChange={handleChange} aria-label="hospital details tabs">
-              <Tab label="Details" />
-              <Tab label="Services" />
-              <Tab label="Users" />
-            </Tabs>
-          </Box>
-          <TabPanel value={value} index={0}>
-            <div
-              css={css`
-                @media (max-width: 767px) {
-                  width: 100%;
-                  flex-grow: 0 !important;
-                }
-              `}
-              className="text-center flex-grow-1"
-              style={{
-                background: 'linear-gradient(to right bottom, #0074D9, #00A5F8)',
-                padding: '1rem',
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                color: 'white'
-              }}
-            >
-              <Avatar
-                src={`${import.meta.env.VITE_APP_API_BASE_URL}${hospitalData?.photo_url}`}
-                alt="Profile Picture"
-                sx={{ width: 128, height: 128, cursor: 'pointer', my: 2 }}
-                onClick={() => setProfilePhotoVisible(true)}
-              />
-              <h2>{hospitalData?.name}</h2>
+          <div
+            css={css`
+              @media (max-width: 767px) {
+                width: 100%;
+                flex-grow: 0 !important;
+              }
+            `}
+            className="text-center flex-grow-1"
+            style={{
+              background: 'linear-gradient(to right bottom, #0074D9, #00A5F8)',
+              padding: '1rem',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              color: 'white'
+            }}
+          >
+            <Avatar
+              src={`${import.meta.env.VITE_APP_API_BASE_URL}${hospitalData?.photo_url}`}
+              alt="Profile Picture"
+              sx={{ width: 128, height: 128, cursor: 'pointer', my: 2 }}
+              onClick={() => setProfilePhotoVisible(true)}
+            />
+            <h2>{hospitalData?.name}</h2>
 
+            {loggedInUserData?.permissions?.includes('edit hospitals') && (
               <Button startIcon={<Edit />} className="m-2" variant="contained" color="primary" onClick={() => setShowEditForm(true)}>
                 Edit Profile
               </Button>
-              {/* <Button
+            )}
+            {/* <Button
                   startIcon={<FaShoppingBag />}
                   className="m-2"
                   variant="contained"
@@ -133,7 +127,15 @@ function HospitalViewPage() {
                 >
                   View Product Catalogue
                 </Button> */}
-            </div>
+          </div>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={value} onChange={handleChange} aria-label="hospital details tabs">
+              <Tab label="Details" />
+              <Tab label="Services" />
+              <Tab label="Users" />
+            </Tabs>
+          </Box>
+          <TabPanel value={value} index={0}>
             <Box sx={{ p: 3, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
               {/* Group 1 */}
               <Box sx={{ flex: '1 1 300px' }}>

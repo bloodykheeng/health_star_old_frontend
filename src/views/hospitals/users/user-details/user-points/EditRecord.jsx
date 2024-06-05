@@ -54,7 +54,7 @@ function EditRecord({ show, onHide, onClose, rowData, userProfileData, hospitalD
 
   return (
     <Dialog open={show} onClose={onHide} maxWidth="sm" fullWidth>
-      <DialogTitle>Add Hospital</DialogTitle>
+      <DialogTitle>Edit User Points</DialogTitle>
       <DialogContent dividers>
         <RowForm
           handleSubmittingFormData={handleSubmit}
