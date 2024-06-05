@@ -205,7 +205,10 @@ function ListRecords() {
     {
       title: 'Percentage Value',
       field: 'points_percentage_value',
-      sorting: true
+      sorting: true,
+      render: (rowData) => {
+        return <div>{rowData.points_percentage_value ? `${rowData.points_percentage_value}%` : 'N/A'}</div>;
+      }
     },
     {
       title: 'State',
