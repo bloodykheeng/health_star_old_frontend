@@ -420,7 +420,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                               const value = e.target.value;
                               setSelectedRole(value);
                               form.setFieldValue(field.name, value);
-                              if (value !== 'Health Facility Manager') {
+                              if (!['Health Facility Manager', 'Patient'].includes(value)) {
                                 form.setFieldValue('healthFacility', '');
                               }
                             }}

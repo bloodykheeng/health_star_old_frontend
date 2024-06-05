@@ -85,7 +85,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingThirdPartySignUp, setIsLoadingThirdPartySignUp] = useState(false);
 
-  const [selectedRole, setSelectedRole] = useState('Health Facility Manager');
+  const [selectedRole, setSelectedRole] = useState('Patient');
 
   const [photoPreview, setPhotoPreview] = useState(null);
 
@@ -267,8 +267,8 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
               password: initialData?.password,
               phone: initialData?.phone,
               dateOfBirth: initialData?.dateOfBirth,
-              role: initialData?.role ?? 'Health Facility Manager',
-              status: initialData?.status,
+              role: initialData?.role ?? 'Patient',
+              status: initialData?.status ?? 'active',
               health_facilities: initialData?.hospitals || (hospitalData ? [hospitalData] : []),
               agree: false,
               photo: null,
@@ -421,7 +421,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                               const value = e.target.value;
                               setSelectedRole(value);
                               form.setFieldValue(field.name, value);
-                              if (value !== 'Health Facility Manager') {
+                              if (!['Health Facility Manager', 'Patient'].includes(value)) {
                                 form.setFieldValue('healthFacility', '');
                               }
                             }}
@@ -432,9 +432,9 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                             <MenuItem value="" disabled>
                               Select a Role
                             </MenuItem>
-                            {/* <MenuItem value="Patient">Patient</MenuItem> */}
+                            <MenuItem value="Patient">Patient</MenuItem>
                             <MenuItem value="Health Facility Manager">Health Facility Manager</MenuItem>
-                            <MenuItem value="Admin">Admin</MenuItem>
+                            {/* <MenuItem value="Admin">Admin</MenuItem> */}
                           </Select>
                           {meta.touched && meta.error && <FormHelperText error>{meta.error}</FormHelperText>}
                         </Stack>

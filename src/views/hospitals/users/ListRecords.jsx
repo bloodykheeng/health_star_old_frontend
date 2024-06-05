@@ -216,7 +216,8 @@ function ListRecords({ hospitalData }) {
         </span>
       )
     },
-    { title: 'Email', field: 'email', sorting: false },
+    { title: 'Email', field: 'email', sorting: false, render: (rowData) => rowData?.email || 'N/A' },
+    { title: 'Phone', field: 'phone', sorting: false, render: (rowData) => rowData?.phone || 'N/A' }, //
     { title: 'Role', field: 'role', sorting: false },
 
     // { title: 'Vendor', field: 'vendors.vendor.name', render: (rowData) => rowData?.vendors?.vendor?.name || 'N/A' },

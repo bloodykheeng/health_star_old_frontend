@@ -274,8 +274,7 @@ function RowForm({
                                   label="Select a User"
                                   placeholder="Search for user"
                                   error={Boolean(touched.user && errors.user)}
-                                  // disabled={getListOfUsers?.isLoading || isSubmitting}
-                                  disabled={true}
+                                  disabled={getListOfUsers?.isLoading || isSubmitting}
                                   InputProps={{
                                     ...params.InputProps,
                                     endAdornment: (
@@ -318,8 +317,7 @@ function RowForm({
                                   label="Select a Hospital"
                                   placeholder="Search for hospital"
                                   error={Boolean(touched.hospital && errors.hospital)}
-                                  // disabled={getListOfHospitals?.isLoading || isSubmitting}
-                                  disabled={true}
+                                  disabled={getListOfHospitals?.isLoading || isSubmitting}
                                   InputProps={{
                                     ...params.InputProps,
                                     endAdornment: (

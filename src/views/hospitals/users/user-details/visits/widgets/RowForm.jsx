@@ -308,6 +308,7 @@ function RowForm({
                               onChange={(event, newValue) => {
                                 setFieldValue('user', newValue);
                               }}
+                              disabled={true}
                               renderInput={(params) => (
                                 <TextField
                                   {...params}
@@ -352,6 +353,7 @@ function RowForm({
                                 console.log('🚀 ~ newValue:', newValue);
                                 setFieldValue('hospital', newValue);
                               }}
+                              disabled={true}
                               renderInput={(params) => (
                                 <TextField
                                   {...params}
@@ -490,26 +492,6 @@ function RowForm({
                   </Grid> */}
 
                   <Grid item xs={12} md={6}>
-                    <Stack spacing={1}>
-                      <InputLabel htmlFor="details">Details</InputLabel>
-                      <TextField
-                        id="details"
-                        label="details"
-                        multiline
-                        rows={4}
-                        value={values.details}
-                        name="details"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        placeholder="Enter details"
-                        error={Boolean(touched.details && errors.details)}
-                        style={{ resize: 'both' }} // Add resize style
-                      />
-                      {touched.details && errors.details && <FormHelperText error>{errors.details}</FormHelperText>}
-                    </Stack>
-                  </Grid>
-
-                  <Grid item xs={12} md={6}>
                     <Field name="visit_services">
                       {({ field }) => (
                         <>
@@ -554,6 +536,26 @@ function RowForm({
                         readOnly: true
                       }}
                     />
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Stack spacing={1}>
+                      <InputLabel htmlFor="details">Details</InputLabel>
+                      <TextField
+                        id="details"
+                        label="details"
+                        multiline
+                        rows={4}
+                        value={values.details}
+                        name="details"
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        placeholder="Enter details"
+                        error={Boolean(touched.details && errors.details)}
+                        style={{ resize: 'both' }} // Add resize style
+                      />
+                      {touched.details && errors.details && <FormHelperText error>{errors.details}</FormHelperText>}
+                    </Stack>
                   </Grid>
 
                   {errors.submit && (

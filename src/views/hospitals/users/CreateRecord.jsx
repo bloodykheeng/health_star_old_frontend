@@ -62,11 +62,11 @@ function CreateRecord({ hospitalData, show, onHide, onClose }) {
           setIsSubmittingFormData={setIsSubmittingFormData}
           hospitalData={hospitalData}
         />
-        {createMutationIsLoading && (
+        {/* {createMutationIsLoading && (
           <center>
             <CircularProgress size={24} />
           </center>
-        )}
+        )} */}
       </DialogContent>
       <DialogActions>
         <Button onClick={onHide} color="primary">
