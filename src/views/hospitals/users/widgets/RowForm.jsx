@@ -380,6 +380,8 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                         {({ field }) => (
                           <>
                             <Autocomplete
+                              //isOptionEqualToValue helps to define how comparison is gonna be made
+                              isOptionEqualToValue={(option, value) => option.id === value.id}
                               multiple
                               options={getListOfHospitals?.data?.data?.data ?? []}
                               getOptionLabel={(option) => option.name}

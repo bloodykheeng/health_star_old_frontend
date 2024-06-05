@@ -38,13 +38,30 @@ function UserDetailsModal({ user, showModal, handleCloseModal }) {
               {' '}
               <Chip label={user.status} color={getStatusColor(user.status)} />
             </Stack>
+            {['Health Facility Manager', 'Patient'].includes(user.role) && (
+              <>
+                <strong>Hospitals List</strong>
+                <Typography variant="body1">
+                  <List>
+                    {user.hospitals.map((item, index) => (
+                      <ListItem key={index}>
+                        <ListItemText primary={item.name} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Typography>
+              </>
+            )}
 
             <Typography variant="body1">
               <List>
                 {user.permissions.map((permission, index) => (
-                  <ListItem key={index}>
-                    <ListItemText primary={permission} />
-                  </ListItem>
+                  <>
+                    <strong>Permissions List</strong>
+                    <ListItem key={index}>
+                      <ListItemText primary={permission} />
+                    </ListItem>
+                  </>
                 ))}
               </List>
             </Typography>

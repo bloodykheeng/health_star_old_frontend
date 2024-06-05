@@ -52,6 +52,7 @@ function EditRecord({ show, onHide, onClose, rowData }) {
     formData.append('status', data.status);
     formData.append('phone', data.phone);
     formData.append('dateOfBirth', data.dateOfBirth);
+    formData.append('health_facilities', JSON.stringify(data?.health_facilities));
 
     // Only append the password if it's provided, to avoid updating it unintentionally
     if (data.password) {
@@ -89,11 +90,11 @@ function EditRecord({ show, onHide, onClose, rowData }) {
           setIsSubmittingFormData={setIsSubmittingFormData}
           initialData={rowData}
         />
-        {editMutationIsLoading && (
+        {/* {editMutationIsLoading && (
           <center>
             <CircularProgress size={24} />
           </center>
-        )}
+        )} */}
       </DialogContent>
       <DialogActions>
         <Button

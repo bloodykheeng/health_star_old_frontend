@@ -125,7 +125,8 @@ export default function AuthLogin({ isDemo = false }) {
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          // email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          email: Yup.string().max(255).required('Email or PhoneNumber is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={(values, { setSubmitting, setErrors, validateForm }) => {
@@ -139,7 +140,7 @@ export default function AuthLogin({ isDemo = false }) {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-login">Email / PhoneNumber</InputLabel>
                   <OutlinedInput
                     id="email-login"
                     type="email"
@@ -147,7 +148,7 @@ export default function AuthLogin({ isDemo = false }) {
                     name="email"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder="Enter email / PhoneNumber address"
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
                   />

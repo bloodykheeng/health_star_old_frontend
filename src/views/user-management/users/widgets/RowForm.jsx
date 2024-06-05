@@ -42,7 +42,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  CircularProgress
+  CircularProgress,
+  Autocomplete,
+  TextField
 } from '@mui/material';
 
 // project import
@@ -62,6 +64,16 @@ import moment from 'moment';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { debounce } from 'lodash';
+
+import {
+  getAllHospitals,
+  getHospitalById,
+  postHospital,
+  updateHospital,
+  deleteHospitalById
+} from '../../../../services/hospital/hospital-service';
+
 function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIsSubmittingFormData, initialData }) {
   const queryClient = useQueryClient();
   const [level, setLevel] = useState();
@@ -72,7 +84,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingThirdPartySignUp, setIsLoadingThirdPartySignUp] = useState(false);
 
-  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedRole, setSelectedRole] = useState('Health Facility Manager');
 
   const [photoPreview, setPhotoPreview] = useState(null);
 
@@ -131,27 +143,117 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
     }
   };
 
+  //
+  const [hospitalSelectSearch, setHospitalSelectSearch] = useState('');
+  console.log('🚀 ~ RowForm ~ search:', hospitalSelectSearch);
+  const getListOfHospitals = useQuery({
+    queryKey: ['hospitals', hospitalSelectSearch],
+    queryFn: () => getAllHospitals({ search: hospitalSelectSearch })
+  });
+
+  const debouncedSetSearch = debounce((value) => {
+    setHospitalSelectSearch(value);
+  }, 300);
+
+  useEffect(() => {
+    return () => {
+      debouncedSetSearch.cancel();
+    };
+  }, []);
+
   // const schema = validationSchema(initialData);
-  const validationSchema = () =>
-    Yup.object().shape({
+  // const validationSchema = () =>
+  //   Yup.object().shape(
+  //     {
+  //       name: Yup.string().max(255).required('Name is required'),
+  //       // email: Yup.string()
+  //       //   .email('Must be a valid email')
+  //       //   .max(255)
+  //       //   .when('phone', {
+  //       //     is: undefined,
+  //       //     then: Yup.string().required('Email is required'),
+  //       //     otherwise: Yup.string().max(255)
+  //       //   }),
+  //       // phone: Yup.string()
+  //       //   .matches(/^\+[1-9]\d{1,14}$/, 'Phone number is not valid')
+  //       //   .when('email', {
+  //       //     is: undefined,
+  //       //     then: Yup.string().required('Phone number is required'),
+  //       //     otherwise: Yup.string().matches(/^\+[1-9]\d{1,14}$/, 'Phone number is not valid')
+  //       //   }),
+  //       email: Yup.string().when('phone', {
+  //         is: (phone) => !phone || phone.length === 0,
+  //         then: Yup.string().required('At least one of the fields is required')
+  //       }),
+  //       phone: Yup.string().when('email', {
+  //         is: (email) => !email || email.length === 0,
+  //         then: Yup.string().required('At least one of the fields is required')
+  //       }),
+  //       password: !!initialData ? Yup.string().notRequired() : Yup.string().max(255).required('Password is required'),
+  //       dateOfBirth: Yup.date().required('Date of Birth is required'),
+  //       // dateOfBirth: Yup.date()
+  //       //   .max(moment().subtract(18, 'years'), 'You must be at least 18 years old')
+  //       //   .required('Year of Birth is required'),
+  //       role: Yup.string().required('Role is required'),
+  //       status: Yup.string().required('Status is required'),
+  //       // health_facilities: Yup.array().when('role', {
+  //       //   is: 'Health Facility Manager',
+  //       //   then: Yup.array().min(1, 'At least one Health Facility is required').required('Health Facility is required')
+  //       // }),
+  //       // health_facilities: Yup.array().when('role', {
+  //       //   is: Yup.string().oneOf(['Health Facility Manager', 'Patient']),
+  //       //   then: Yup.array().min(1, 'At least one Health Facility is required').required('Health Facility is required'),
+  //       //   otherwise: Yup.array().notRequired() // Optional if role is not 'Health Facility Manager' or 'Patient'
+  //       // }),
+  //       health_facilities: Yup.array().when('role', (role) => {
+  //         if (role === 'Health Facility Manager' || role === 'Patient') {
+  //           return Yup.array().min(1, 'At least one Health Facility is required').required('Health Facility is required');
+  //         } else {
+  //           return Yup.array().notRequired();
+  //         }
+  //       }),
+  //       photo: Yup.string().notRequired() // Make photo field optional
+
+  //       // photo: !!initialData ? Yup.string().notRequired() : Yup.mixed().required('Photo is required')
+  //     },
+  //     ['email', 'phone']
+  //   );
+
+  const validationSchema = Yup.object().shape(
+    {
       name: Yup.string().max(255).required('Name is required'),
-      email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+      // email: Yup.string().when('mobile', {
+      //   is: (phone) => !phone || phone.length === 0,
+      //   then: () => Yup.string().required('At least one of the fields is required email / phone number')
+      // }),
+      // phone: Yup.string().when('email', {
+      //   is: (email) => !email || email.length === 0,
+      //   then: () => Yup.string().required('At least one of the fields is required email / phone number')
+      // }),
+      email: Yup.string().when('phone', {
+        is: (phone) => !phone || phone.length === 0,
+        then: () => Yup.string().email('Must be a valid email').required('At least one of the fields is required (email / phone number)')
+      }),
+      phone: Yup.string().when('email', {
+        is: (email) => !email || email.length === 0,
+        then: () =>
+          Yup.string()
+            .matches(/^\+[1-9]\d{1,14}$/, 'Phone number is not valid')
+            .required('At least one of the fields is required (email / phone number)')
+      }),
       password: !!initialData ? Yup.string().notRequired() : Yup.string().max(255).required('Password is required'),
-      phone: Yup.string()
-        .matches(/^\+[1-9]\d{1,14}$/, 'Phone number is not valid')
-        .required('Phone number is required'),
       dateOfBirth: Yup.date().required('Date of Birth is required'),
-      // dateOfBirth: Yup.date()
-      //   .max(moment().subtract(18, 'years'), 'You must be at least 18 years old')
-      //   .required('Year of Birth is required'),
       role: Yup.string().required('Role is required'),
       status: Yup.string().required('Status is required'),
-      healthFacility: Yup.string().when('role', {
-        is: 'Health Facility Manager',
-        then: Yup.string().required('Health Facility is required')
+      health_facilities: Yup.array().when('role', {
+        is: (role) => role === 'Health Facility Manager' || role === 'Patient',
+        then: () => Yup.array().min(1, 'At least one Health Facility is required').required('Health Facility is required'),
+        otherwise: () => Yup.array().notRequired()
       }),
-      photo: !!initialData ? Yup.string().notRequired() : Yup.mixed().required('Photo is required')
-    });
+      photo: Yup.string().notRequired()
+    },
+    ['email', 'phone']
+  );
 
   return (
     <Grid container spacing={3}>
@@ -164,9 +266,9 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
               password: initialData?.password,
               phone: initialData?.phone,
               dateOfBirth: initialData?.dateOfBirth,
-              role: initialData?.role ?? 'Patient',
-              healthFacility: initialData?.healthFacility,
+              role: initialData?.role ?? 'Health Facility Manager',
               status: initialData?.status,
+              health_facilities: initialData?.hospitals ?? [],
               agree: false,
               photo: null,
               submit: null
@@ -217,7 +319,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                   </Grid>
 
                   <Grid item xs={12} md={6}>
-                    <Stack spacing={1}>
+                    <div>
                       <InputLabel htmlFor="photo-upload">Photo*</InputLabel>
                       <input
                         id="photo-upload"
@@ -249,7 +351,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                           {errors.photo}
                         </FormHelperText>
                       )}
-                    </Stack>
+                    </div>
                   </Grid>
 
                   <Grid item xs={12} md={6}>
@@ -329,7 +431,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                             <MenuItem value="" disabled>
                               Select a Role
                             </MenuItem>
-                            <MenuItem value="Patient">Patient</MenuItem>
+                            {/* <MenuItem value="Patient">Patient</MenuItem> */}
                             <MenuItem value="Health Facility Manager">Health Facility Manager</MenuItem>
                             <MenuItem value="Admin">Admin</MenuItem>
                           </Select>
@@ -339,34 +441,52 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
                     </Field>
                   </Grid>
 
-                  {selectedRole === 'Health Facility Manager' && (
+                  {['Health Facility Manager', 'Patient'].includes(selectedRole) && (
                     <Grid item xs={12} md={6}>
-                      <Field name="healthFacility">
-                        {({ field, form, meta }) => (
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="healthFacility-signup">Health Facility*</InputLabel>
-                            <Select
-                              id="healthFacility-signup"
-                              value={field.value}
-                              onChange={(e) => {
-                                form.setFieldValue(field.name, e.target.value);
-                              }}
-                              displayEmpty
-                              fullWidth
-                              error={Boolean(meta.touched && meta.error)}
-                            >
-                              <MenuItem value="" disabled>
-                                Select a Health Facility
-                              </MenuItem>
-                              <MenuItem value="Case Clinic">Case Clinic</MenuItem>
-                              <MenuItem value="Mulago">Mulago</MenuItem>
-                              <MenuItem value="Mengo">Mengo</MenuItem>
-                              {/* Add more facilities as needed */}
-                            </Select>
-                            {meta.touched && meta.error && <FormHelperText error>{meta.error}</FormHelperText>}
-                          </Stack>
-                        )}
-                      </Field>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="health_facilities">Health Facilities</InputLabel>
+                        <Field name="health_facilities">
+                          {({ field }) => (
+                            <>
+                              <Autocomplete
+                                //isOptionEqualToValue helps to define how comparison is gonna be made
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                multiple
+                                options={getListOfHospitals?.data?.data?.data ?? []}
+                                getOptionLabel={(option) => option.name}
+                                value={values.health_facilities}
+                                onChange={(event, newValue) => {
+                                  setFieldValue('health_facilities', newValue);
+                                }}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    label="Select a Health Facility"
+                                    placeholder="Search for health facility"
+                                    error={Boolean(touched.healthFacility && errors.healthFacility)}
+                                    disabled={getListOfHospitals?.isLoading || isSubmitting}
+                                    InputProps={{
+                                      ...params.InputProps,
+                                      endAdornment: (
+                                        <>
+                                          {getListOfHospitals?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                          {params.InputProps.endAdornment}
+                                        </>
+                                      )
+                                    }}
+                                  />
+                                )}
+                                // disabled={getListOfHospitals?.isLoading || isSubmitting}
+                              />
+                              {getListOfHospitals?.isLoading && <p>Loading...</p>}
+                              {touched.health_facilities && errors.health_facilities && (
+                                <FormHelperText error>{errors.health_facilities}</FormHelperText>
+                              )}
+                            </>
+                          )}
+                        </Field>
+                      </Stack>
                     </Grid>
                   )}
                   <Grid item xs={12} md={6}>

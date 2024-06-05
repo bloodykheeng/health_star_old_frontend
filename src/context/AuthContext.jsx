@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = null;
 
       console.log('logout response is : ', data);
-      navigate('/');
+      navigate('/login');
       window.location.reload();
       // Display a success toast message
       toast.success('Goodbye 👋');

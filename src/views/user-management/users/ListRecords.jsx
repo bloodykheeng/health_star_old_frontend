@@ -206,7 +206,14 @@ function ListRecords() {
         </span>
       )
     },
-    { title: 'Email', field: 'email', sorting: false },
+    { title: 'Email', field: 'email', sorting: false, render: (rowData) => rowData?.email || 'N/A' },
+    { title: 'Phone', field: 'phone', sorting: false, render: (rowData) => rowData?.phone || 'N/A' }, // Added phone field
+    {
+      title: 'Date of Birth',
+      field: 'dateOfBirth',
+      sorting: false,
+      render: (rowData) => (rowData.dateOfBirth ? moment(rowData.dateOfBirth).format('MM/DD/YYYY') : 'N/A')
+    },
     { title: 'Role', field: 'role', sorting: false },
 
     // { title: 'Vendor', field: 'vendors.vendor.name', render: (rowData) => rowData?.vendors?.vendor?.name || 'N/A' },
@@ -244,7 +251,7 @@ function ListRecords() {
           <ServerSideMuiTable
             tableTitle="Users"
             tableData={getListOfUsers?.data?.data ?? []}
-            tableColumns={columns}
+            tableColumns={columns ?? []}
             handleShowEditForm={handleShowEditForm}
             handleDelete={(e, item_id) => handleDelete(e, item_id)}
             showEdit={loggedInUserData?.permissions?.includes('update')}

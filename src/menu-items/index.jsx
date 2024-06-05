@@ -8,15 +8,21 @@ import systemConfigurations from './system-configurations';
 
 // ==============================|| MENU ITEMS ||============================== //
 
-const menuItems = {
+export const AdminMenuItems = {
   items: [
     dashboard,
     pages,
     systemConfigurations,
     userManagement
-    //  utilities,
-    //  support
+    // utilities,
+    // support
   ]
 };
 
-export default menuItems;
+export const healthManagerMenuItems = {
+  items: [dashboard, pages]
+};
+
+export const PatientMenuItems = {
+  items: [dashboard, pages]
+};

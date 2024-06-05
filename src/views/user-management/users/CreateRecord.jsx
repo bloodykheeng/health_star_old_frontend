@@ -61,11 +61,11 @@ function CreateRecord({ show, onHide, onClose }) {
           isSubmittingFormData={isSubmittingFormData}
           setIsSubmittingFormData={setIsSubmittingFormData}
         />
-        {createMutationIsLoading && (
+        {/* {createMutationIsLoading && (
           <center>
             <CircularProgress size={24} />
           </center>
-        )}
+        )} */}
       </DialogContent>
       <DialogActions>
         <Button onClick={onHide} color="primary">

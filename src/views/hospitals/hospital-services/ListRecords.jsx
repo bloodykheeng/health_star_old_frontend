@@ -238,7 +238,7 @@ function ListRecords({ hospitalData }) {
 
           <ClientSideMuiTable
             tableTitle="Hospital Services"
-            tableData={getListOfHospitalServices?.data?.data ?? []}
+            tableData={getListOfHospitalServices?.data?.data?.data ?? []}
             tableColumns={columns}
             handleShowEditForm={handleShowEditForm}
             handleDelete={(e, item_id) => handleDelete(e, item_id)}
