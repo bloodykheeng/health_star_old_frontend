@@ -172,6 +172,7 @@ function RowForm({ handleSubmittingFormData, isSubmittingFormData = false, setIs
               website: initialData?.website || '',
               capacity: initialData?.capacity || '',
               status: initialData?.status || 'active',
+              points_percentage_value: initialData?.points_percentage_value || null,
               photo: null,
               submit: null
             }}

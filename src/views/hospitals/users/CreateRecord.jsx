@@ -60,6 +60,7 @@ function CreateRecord({ hospitalData, show, onHide, onClose }) {
           handleSubmittingFormData={handleSubmit}
           isSubmittingFormData={isSubmittingFormData}
           setIsSubmittingFormData={setIsSubmittingFormData}
+          hospitalData={hospitalData}
         />
         {createMutationIsLoading && (
           <center>

@@ -266,6 +266,7 @@ function RowForm({
                               onChange={(event, newValue) => {
                                 setFieldValue('user', newValue);
                               }}
+                              disabled={true}
                               renderInput={(params) => (
                                 <TextField
                                   {...params}
@@ -273,7 +274,8 @@ function RowForm({
                                   label="Select a User"
                                   placeholder="Search for user"
                                   error={Boolean(touched.user && errors.user)}
-                                  disabled={getListOfUsers?.isLoading || isSubmitting}
+                                  // disabled={getListOfUsers?.isLoading || isSubmitting}
+                                  disabled={true}
                                   InputProps={{
                                     ...params.InputProps,
                                     endAdornment: (
@@ -308,6 +310,7 @@ function RowForm({
                                 console.log('🚀 ~ newValue:', newValue);
                                 setFieldValue('hospital', newValue);
                               }}
+                              disabled={true}
                               renderInput={(params) => (
                                 <TextField
                                   {...params}
@@ -315,7 +318,8 @@ function RowForm({
                                   label="Select a Hospital"
                                   placeholder="Search for hospital"
                                   error={Boolean(touched.hospital && errors.hospital)}
-                                  disabled={getListOfHospitals?.isLoading || isSubmitting}
+                                  // disabled={getListOfHospitals?.isLoading || isSubmitting}
+                                  disabled={true}
                                   InputProps={{
                                     ...params.InputProps,
                                     endAdornment: (
